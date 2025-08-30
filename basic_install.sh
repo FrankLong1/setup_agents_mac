@@ -109,6 +109,22 @@ else
 fi
 
 echo ""
+echo "📦 Installing Gemini CLI..."
+if npm list -g @google/gemini-cli &>/dev/null; then
+    echo "✓ Gemini CLI already installed"
+else
+    npm install -g @google/gemini-cli
+fi
+
+echo ""
+echo "📦 Installing Qwen Code CLI..."
+if npm list -g @qwen-code/qwen-code &>/dev/null; then
+    echo "✓ Qwen Code CLI already installed"
+else
+    npm install -g @qwen-code/qwen-code@latest
+fi
+
+echo ""
 echo "📦 Installing Puppeteer MCP server globally..."
 if npm list -g @modelcontextprotocol/server-puppeteer &>/dev/null; then
     echo "✓ Puppeteer MCP server already installed"
