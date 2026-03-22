@@ -1,0 +1,16 @@
+---
+- name: Set macOS defaults
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ macos_defaults | selectattr('enabled') | list }}"
+  loop_control:
+    label: "{{ item.description }}"
+
+- name: Restart Dock to apply changes
+  shell: killall Dock
+  changed_when: true
+  when: macos_defaults | selectattr('enabled') | list | length > 0

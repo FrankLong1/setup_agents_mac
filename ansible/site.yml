@@ -1,0 +1,59 @@
+---
+# Mac Environment Setup Playbook
+# Run: cd ansible && ansible-playbook site.yml
+# Review: Edit group_vars/all.yml to toggle what gets installed
+#
+# You can run individual roles with tags:
+#   ansible-playbook site.yml --tags homebrew
+#   ansible-playbook site.yml --tags dotfiles
+#   ansible-playbook site.yml --tags vscode
+#   ansible-playbook site.yml --tags npm
+#   ansible-playbook site.yml --tags macos
+#   ansible-playbook site.yml --tags ai_tools
+
+- name: Setup Mac environment
+  hosts: localhost
+  connection: local
+
+  pre_tasks:
+    - name: Ensure Homebrew is installed
+      stat:
+        path: /opt/homebrew/bin/brew
+      register: homebrew_check
+
+    - name: Install Homebrew if missing
+      shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      when: not homebrew_check.stat.exists
+
+    - name: Ensure Xcode CLI tools are installed
+      shell: xcode-select -p
+      register: xcode_check
+      failed_when: false
+      changed_when: false
+
+    - name: Install Xcode CLI tools if missing
+      shell: xcode-select --install
+      when: xcode_check.rc != 0
+
+  roles:
+    - { role: homebrew, tags: ['homebrew'] }
+    - { role: dotfiles, tags: ['dotfiles'] }
+    - { role: vscode, tags: ['vscode'] }
+    - { role: npm_globals, tags: ['npm'] }
+    - { role: macos_defaults, tags: ['macos'] }
+    - { role: ai_tools, tags: ['ai_tools'] }
+
+  post_tasks:
+    - name: Summary
+      debug:
+        msg: |
+          Setup complete! Manual steps remaining:
+          1. Log in to apps (VS Code, Chrome, Spotify, etc.)
+          2. Sign in to GitHub: gh auth login
+          3. Sign in to Google Cloud: gcloud auth login
+          4. Sign in to AWS: aws configure
+          5. Import SSH keys from backup
+          6. Sign in to Claude: claude login
+          7. Sign in to Vercel: vercel login
+          8. Restore Obsidian vault from backup/sync
+          9. Restore Warp launch configurations from backup

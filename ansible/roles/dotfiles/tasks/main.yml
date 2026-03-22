@@ -1,0 +1,34 @@
+---
+- name: Deploy .gitconfig
+  copy:
+    src: gitconfig
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    mode: "0644"
+    backup: true
+
+- name: Deploy .tmux.conf
+  copy:
+    src: tmux.conf
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    mode: "0644"
+    backup: true
+
+- name: Deploy .zshrc
+  template:
+    src: zshrc.j2
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    mode: "0644"
+    backup: true
+
+- name: Ensure .claude directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.claude"
+    state: directory
+    mode: "0755"
+
+- name: Deploy Claude Code settings.json
+  template:
+    src: claude_settings.json.j2
+    dest: "{{ ansible_env.HOME }}/.claude/settings.json"
+    mode: "0644"
+    backup: true

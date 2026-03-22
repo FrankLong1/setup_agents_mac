@@ -1,0 +1,9 @@
+{
+{% if claude_settings.experimental_agent_teams %}
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+{% endif %}
+  "voiceEnabled": {{ claude_settings.voice_enabled | lower }},
+  "skipDangerousModePermissionPrompt": {{ claude_settings.skip_dangerous_mode_prompt | lower }}
+}

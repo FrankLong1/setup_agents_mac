@@ -1,0 +1,18 @@
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+{% for path in extra_path_entries %}
+export PATH="{{ path }}:$PATH"
+{% endfor %}
+
+{% for item in shell_aliases %}
+{% if item.enabled %}
+alias {{ item.alias }}='{{ item.command }}'
+{% endif %}
+{% endfor %}
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"

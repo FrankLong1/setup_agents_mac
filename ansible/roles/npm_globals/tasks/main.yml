@@ -1,0 +1,10 @@
+---
+- name: Install global npm packages
+  npm:
+    name: "{{ item.name }}"
+    global: true
+    state: present
+  loop: "{{ npm_global_packages | selectattr('enabled') | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  ignore_errors: true
