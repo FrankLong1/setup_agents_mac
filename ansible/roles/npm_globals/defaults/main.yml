@@ -1,0 +1,7 @@
+---
+# Global npm packages
+npm_global_packages:
+  - name: "@anthropic-ai/claude-code"
+  - name: ccusage
+  - name: vercel
+  - name: "@modelcontextprotocol/server-puppeteer"

@@ -15,7 +15,7 @@ cd ansible && ./run.sh
 ```
 ansible/
 ├── site.yml                    # Main playbook — orchestrates all roles
-├── group_vars/all.yml          # THE config file — everything listed is installed
+├── group_vars/all.yml          # Overrides only — each role has its own defaults
 ├── run.sh                      # Entry point (installs Ansible if needed)
 ├── ansible.cfg
 ├── inventory.yml
@@ -47,10 +47,11 @@ ansible/
 
 ## How to customize
 
-Edit `ansible/group_vars/all.yml` — everything listed will be installed.
+Each role owns its config in `roles/<name>/defaults/main.yml`.
 
-To add a package: append it to the relevant list.
+To add a package: append it to the relevant role's defaults file.
 To remove a package: delete the line.
+To override a default without touching the role: set the variable in `group_vars/all.yml`.
 
 ---
 

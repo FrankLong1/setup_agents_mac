@@ -1,0 +1,74 @@
+---
+# Homebrew taps
+homebrew_taps:
+  - name: ngrok/ngrok
+
+# CLI tools (Homebrew formulae)
+homebrew_formulae:
+  # Essential dev tools
+  - name: git
+  - name: node
+  - name: "python@3.13"
+  - name: uv
+  - name: ripgrep
+  - name: gh
+  - name: wget
+  - name: tmux
+  - name: bash
+
+  # Languages & runtimes
+  - name: go
+
+  # Cloud & infra
+  - name: awscli
+
+  # Containers
+  - name: docker
+  - name: docker-compose
+  - name: colima
+
+  # Media
+  - name: ffmpeg
+  - name: imagemagick
+
+  # Misc utilities
+  - name: yq
+  - name: graphviz
+
+  # AI tools
+  - name: gemini-cli
+
+# Desktop apps (Homebrew casks)
+homebrew_casks:
+  # Code editors & terminals
+  - name: cursor
+  - name: visual-studio-code
+
+
+  # Productivity & writing
+  - name: obsidian
+
+  # Communication
+  - name: zoom
+  - name: signal
+  - name: whatsapp
+
+  # Browsers
+  - name: google-chrome
+
+  # Cloud
+  - name: gcloud-cli
+  - name: ngrok/ngrok/ngrok
+  - name: google-drive
+
+  # Media & misc
+  - name: spotify
+  - name: flux-app
+
+  # AI desktop apps
+  - name: claude
+  - name: raycast
+  - name: codex-app
+  - name: wispr-flow
+  - name: duet
+  - name: conductor

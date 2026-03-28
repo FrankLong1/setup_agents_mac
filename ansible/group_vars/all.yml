@@ -30,6 +30,9 @@ homebrew_formulae:
   - name: go
   - name: awscli
   - name: gemini-cli
+  - name: wget
+  - name: yq
+  - name: docker
 
 # --- Desktop Apps (Homebrew casks) ---
 homebrew_casks:
@@ -46,6 +49,9 @@ homebrew_casks:
   - name: raycast
   - name: wispr-flow
   - name: codex-app
+  - name: duet
+  - name: conductor
+  - name: flux-app
 
 # --- Mac App Store apps ---
 mas_apps:
@@ -63,9 +69,6 @@ npm_global_packages:
 
 # --- VS Code Extensions ---
 vscode_extensions:
-  # AI
-  - name: anthropic.claude-code
-  - name: github.copilot-chat
   # Python
   - name: ms-python.python
   - name: ms-python.vscode-pylance
@@ -80,13 +83,7 @@ vscode_extensions:
   - name: ms-vscode-remote.remote-ssh
   - name: ms-vscode-remote.remote-containers
   # Cloud
-  - name: amazonwebservices.aws-toolkit-vscode
   - name: hashicorp.terraform
-  # Utilities
-  - name: gruntfuggly.todo-tree
-  - name: vscode-icons-team.vscode-icons
-  - name: mechatroner.rainbow-csv
-  - name: shd101wyy.markdown-preview-enhanced
 
 # --- macOS System Preferences ---
 macos_defaults:
@@ -116,14 +113,10 @@ go_tools:
 
 # --- Dock app order ---
 dock_apps:
-  - "/Applications/ChatGPT Atlas.app"
   - "/Applications/Google Chrome.app"
   - "/System/Applications/Messages.app"
   - "/System/Applications/Notes.app"
-  - "/System/Applications/iPhone Mirroring.app"
   - "/System/Applications/System Settings.app"
-  - "/System/Applications/Voice Memos.app"
-  - "/Applications/Obsidian.app"
   - "/Applications/Cursor.app"
 
 # --- Shell ---
@@ -161,27 +154,3 @@ backup_items:
 manual_install_apps:
   - { name: "We Love Lights", url: "manual download" }
   - { name: "FastestVPN", url: "App Store or website" }
-
-# ============================================================
-# NICE-TO-HAVE — uncomment and move above when needed
-# ============================================================
-# homebrew_formulae (append to list above):
-#   - name: docker
-#   - name: docker-compose
-#   - name: colima
-#   - name: ffmpeg
-#   - name: imagemagick
-#   - name: wget
-#   - name: yq
-#   - name: graphviz
-#
-# homebrew_casks (append to list above):
-#   - name: gcloud-cli
-#   - name: ngrok/ngrok/ngrok       # needs tap: ngrok/ngrok
-#   - name: flux-app
-#   - name: duet
-#   - name: conductor
-#   - name: sublime-text
-#
-# vscode_extensions (append to list above):
-#   - name: ms-azuretools.vscode-docker

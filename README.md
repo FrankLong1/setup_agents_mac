@@ -13,7 +13,7 @@ cd ansible && ./run.sh
 Installs and configures:
 
 - **CLI tools** — git, node, python, uv, ripgrep, docker, tmux, awscli, go, etc.
-- **Desktop apps** — Cursor, VS Code, Warp, Chrome, Obsidian, Spotify, Zoom, Signal, Claude, etc.
+- **Desktop apps** — Cursor, VS Code, Chrome, Obsidian, Spotify, Zoom, Signal, Claude, etc.
 - **AI tools** — Claude Code, Gemini CLI, Goose, ccusage, Puppeteer MCP
 - **VS Code extensions** — Copilot, Python, Jupyter, Go, Docker, Terraform, etc.
 - **Dotfiles** — .gitconfig, .tmux.conf, .zshrc, Claude settings
@@ -22,7 +22,7 @@ Installs and configures:
 
 ## Configuration
 
-Everything is controlled by one file: `ansible/group_vars/all.yml`
+Each role owns its config in `roles/<name>/defaults/main.yml`. Override any default in `group_vars/all.yml`.
 
 - To add a package: append it to the relevant list
 - To remove a package: delete the line
@@ -44,6 +44,6 @@ Everything is controlled by one file: `ansible/group_vars/all.yml`
 cd ansible && ./run.sh backup
 ```
 
-Backs up: Brewfile, App Store list, VS Code extensions, npm globals, SSH keys, fonts, Warp configs.
+Backs up: Brewfile, App Store list, VS Code extensions, npm globals, SSH keys, fonts.
 
 See [SETUP_PLAN.md](SETUP_PLAN.md) for the full pre-wipe checklist and manual steps.

@@ -1,0 +1,16 @@
+---
+# Backup settings
+backup_dir: "{{ ansible_env.HOME }}/mac_backup"
+backup_items:
+  - name: ssh_keys
+    src: "{{ ansible_env.HOME }}/.ssh"
+  - name: fonts
+    src: "{{ ansible_env.HOME }}/Library/Fonts"
+
+# Manual install apps (not in Homebrew or App Store)
+# Printed as reminders in post_tasks
+manual_install_apps:
+  - name: "We Love Lights"
+    url: "manual download"
+  - name: "FastestVPN"
+    url: "App Store or website"

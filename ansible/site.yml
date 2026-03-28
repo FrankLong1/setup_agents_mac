@@ -54,8 +54,7 @@
           5. vercel login
           6. Restore SSH keys from backup
           7. Restore Obsidian vault from backup/sync
-          8. Restore Warp launch configs
-          9. Sign in to apps (Chrome, Spotify, Signal, WhatsApp, Zoom)
+          8. Sign in to apps (Chrome, Spotify, Signal, WhatsApp, Zoom)
           10. Grant Terminal "Full Disk Access" in System Settings > Privacy & Security
           11. Enable "Remote Login" in System Settings > Sharing (if needed)
       tags: ['always']

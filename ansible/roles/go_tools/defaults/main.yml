@@ -1,0 +1,13 @@
+---
+# Go tools (installed via `go install`)
+go_tools:
+  - name: github.com/go-delve/delve/cmd/dlv@latest
+    description: "Go debugger"
+  - name: golang.org/x/tools/cmd/goimports@latest
+    description: "Auto-manage imports"
+  - name: github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    description: "Go linter aggregator"
+  - name: golang.org/x/tools/gopls@latest
+    description: "Go language server"
+  - name: honnef.co/go/tools/cmd/staticcheck@latest
+    description: "Go static analyzer"
