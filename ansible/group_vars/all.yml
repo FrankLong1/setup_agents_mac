@@ -31,7 +31,6 @@ homebrew_formulae:
   - name: wget
   - name: tmux
   - name: bash
-  - name: tree
 
   # Languages & runtimes
   - name: go
@@ -53,7 +52,6 @@ homebrew_formulae:
   - name: graphviz
 
   # AI tools
-  - name: block-goose-cli
   - name: gemini-cli
 
 # --- Desktop Apps (Homebrew casks) ---
@@ -61,8 +59,6 @@ homebrew_casks:
   # Code editors & terminals
   - name: cursor
   - name: visual-studio-code
-  - name: warp
-  - name: sublime-text
 
   # Productivity & writing
   - name: obsidian
@@ -85,7 +81,6 @@ homebrew_casks:
   - name: flux-app
 
   # AI desktop apps
-  - name: block-goose
   - name: claude
   - name: raycast
   - name: codex-app
@@ -104,7 +99,6 @@ mas_apps:
 # --- Global npm packages ---
 npm_global_packages:
   - name: "@anthropic-ai/claude-code"
-  - name: "@google/gemini-cli"
   - name: ccusage
   - name: vercel
   - name: "@modelcontextprotocol/server-puppeteer"
@@ -236,7 +230,7 @@ dock_apps:
   - "/System/Applications/System Settings.app"
   - "/System/Applications/Voice Memos.app"
   - "/Applications/Obsidian.app"
-  - "/Applications/Warp.app"
+  - "/Applications/Cursor.app"
 
 # --- Shell aliases ---
 shell_aliases:
@@ -274,8 +268,6 @@ backup_items:
     src: "{{ ansible_env.HOME }}/.ssh"
   - name: fonts
     src: "{{ ansible_env.HOME }}/Library/Fonts"
-  - name: warp_configs
-    src: "{{ ansible_env.HOME }}/.warp"
 
 # --- Manual install apps (not in Homebrew or App Store) ---
 manual_install_apps:
