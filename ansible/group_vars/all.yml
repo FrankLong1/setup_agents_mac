@@ -1,95 +1,53 @@
 # ============================================================
-# MAC SETUP CONFIG — Review and toggle items before running
+# MAC SETUP CONFIG
 # ============================================================
-# Only enabled items are listed. To add more, append with enabled: true.
-# Full catalog of available packages: `brew formulae`, `brew search`, `mas search`
+# Essentials only — everything else is a `brew install` away.
+# Nice-to-haves are listed in comments at the bottom.
 # ============================================================
 
 # --- User identity ---
 git_user_name: "Frank Long"
 git_user_email: "fylong00@gmail.com"
 
-# --- Homebrew Taps ---
-homebrew_taps:
-  - name: ngrok/ngrok
-
 # --- Helper Utilities (installed first, used by other roles) ---
 helper_formulae:
   - name: mas                       # Mac App Store CLI — required for mas_apps role
-  - name: ansible-lint              # Lint your playbooks
-  - name: tree                      # Visualize directory structure
+  - name: ansible-lint
+  - name: tree
 
 # --- Core CLI Tools (Homebrew formulae) ---
+homebrew_taps: []
+
 homebrew_formulae:
-  # Essential dev tools
   - name: git
   - name: node
   - name: "python@3.13"
   - name: uv
   - name: ripgrep
   - name: gh
-  - name: wget
   - name: tmux
   - name: bash
-
-  # Languages & runtimes
   - name: go
-
-  # Cloud & infra
   - name: awscli
-
-  # Containers
-  - name: docker
-  - name: docker-compose
-  - name: colima
-
-  # Media
-  - name: ffmpeg
-  - name: imagemagick
-
-  # Misc utilities
-  - name: yq
-  - name: graphviz
-
-  # AI tools
   - name: gemini-cli
 
 # --- Desktop Apps (Homebrew casks) ---
 homebrew_casks:
-  # Code editors & terminals
   - name: cursor
   - name: visual-studio-code
-
-  # Productivity & writing
   - name: obsidian
-
-  # Communication
+  - name: google-chrome
   - name: zoom
   - name: signal
   - name: whatsapp
-
-  # Browsers
-  - name: google-chrome
-
-  # Cloud
-  - name: gcloud-cli
-  - name: ngrok/ngrok/ngrok
-  - name: google-drive
-
-  # Media & misc
   - name: spotify
-  - name: flux-app
-
-  # AI desktop apps
+  - name: google-drive
   - name: claude
   - name: raycast
-  - name: codex-app
   - name: wispr-flow
-  - name: duet
-  - name: conductor
+  - name: codex-app
 
-# --- Mac App Store apps (requires `mas`) ---
-# Find app IDs: `mas search <app name>`
+# --- Mac App Store apps ---
 mas_apps:
   - name: Magnet
     id: 441258766
@@ -105,34 +63,25 @@ npm_global_packages:
 
 # --- VS Code Extensions ---
 vscode_extensions:
-  # AI assistants
+  # AI
   - name: anthropic.claude-code
   - name: github.copilot-chat
-
   # Python
   - name: ms-python.python
   - name: ms-python.vscode-pylance
   - name: ms-python.debugpy
-
   # Jupyter
   - name: ms-toolsai.jupyter
   - name: ms-toolsai.jupyter-keymap
   - name: ms-toolsai.jupyter-renderers
-
   # Go
   - name: golang.go
-
   # Remote / containers
   - name: ms-vscode-remote.remote-ssh
   - name: ms-vscode-remote.remote-containers
-
-  # Docker
-  - name: ms-azuretools.vscode-docker
-
   # Cloud
   - name: amazonwebservices.aws-toolkit-vscode
   - name: hashicorp.terraform
-
   # Utilities
   - name: gruntfuggly.todo-tree
   - name: vscode-icons-team.vscode-icons
@@ -142,85 +91,30 @@ vscode_extensions:
 # --- macOS System Preferences ---
 macos_defaults:
   # Dock
-  - domain: com.apple.dock
-    key: autohide
-    type: bool
-    value: true
-    description: "Auto-hide the Dock"
-  - domain: com.apple.dock
-    key: tilesize
-    type: int
-    value: 74
-    description: "Dock icon size (pixels)"
-  - domain: com.apple.dock
-    key: show-recents
-    type: bool
-    value: false
-    description: "Hide recent apps in Dock"
-
+  - { domain: com.apple.dock, key: autohide, type: bool, value: true, description: "Auto-hide the Dock" }
+  - { domain: com.apple.dock, key: tilesize, type: int, value: 74, description: "Dock icon size (pixels)" }
+  - { domain: com.apple.dock, key: show-recents, type: bool, value: false, description: "Hide recent apps in Dock" }
   # Finder
-  - domain: NSGlobalDomain
-    key: AppleShowAllExtensions
-    type: bool
-    value: true
-    description: "Show all file extensions"
-  - domain: com.apple.finder
-    key: FXPreferredViewStyle
-    type: string
-    value: Nlsv
-    description: "Finder default view: list"
-  - domain: com.apple.finder
-    key: FXPreferredGroupBy
-    type: string
-    value: Kind
-    description: "Finder group by: Kind"
-  - domain: com.apple.finder
-    key: NewWindowTarget
-    type: string
-    value: PfAF
-    description: "New Finder windows open All Files"
-
+  - { domain: NSGlobalDomain, key: AppleShowAllExtensions, type: bool, value: true, description: "Show all file extensions" }
+  - { domain: com.apple.finder, key: FXPreferredViewStyle, type: string, value: Nlsv, description: "Finder default view: list" }
+  - { domain: com.apple.finder, key: FXPreferredGroupBy, type: string, value: Kind, description: "Finder group by: Kind" }
+  - { domain: com.apple.finder, key: NewWindowTarget, type: string, value: PfAF, description: "New Finder windows open All Files" }
   # Keyboard
-  - domain: NSGlobalDomain
-    key: KeyRepeat
-    type: int
-    value: 2
-    description: "Key repeat rate (lower=faster)"
-  - domain: NSGlobalDomain
-    key: InitialKeyRepeat
-    type: int
-    value: 15
-    description: "Delay until key repeat (lower=shorter)"
-  - domain: NSGlobalDomain
-    key: ApplePressAndHoldEnabled
-    type: bool
-    value: false
-    description: "Disable press-and-hold for accented chars (enable key repeat)"
-  - domain: NSGlobalDomain
-    key: NSAutomaticCapitalizationEnabled
-    type: bool
-    value: false
-    description: "Disable auto-capitalization"
-  - domain: NSGlobalDomain
-    key: NSAutomaticPeriodSubstitutionEnabled
-    type: bool
-    value: false
-    description: "Disable double-space period substitution"
+  - { domain: NSGlobalDomain, key: KeyRepeat, type: int, value: 2, description: "Key repeat rate (lower=faster)" }
+  - { domain: NSGlobalDomain, key: InitialKeyRepeat, type: int, value: 15, description: "Delay until key repeat (lower=shorter)" }
+  - { domain: NSGlobalDomain, key: ApplePressAndHoldEnabled, type: bool, value: false, description: "Disable press-and-hold (enable key repeat)" }
+  - { domain: NSGlobalDomain, key: NSAutomaticCapitalizationEnabled, type: bool, value: false, description: "Disable auto-capitalization" }
+  - { domain: NSGlobalDomain, key: NSAutomaticPeriodSubstitutionEnabled, type: bool, value: false, description: "Disable double-space period" }
 
 # --- Go tools (installed via `go install`) ---
 go_tools:
-  - name: github.com/go-delve/delve/cmd/dlv@latest
-    description: "Go debugger"
-  - name: golang.org/x/tools/cmd/goimports@latest
-    description: "Auto-manage imports"
-  - name: github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-    description: "Go linter aggregator"
-  - name: golang.org/x/tools/gopls@latest
-    description: "Go language server"
-  - name: honnef.co/go/tools/cmd/staticcheck@latest
-    description: "Go static analyzer"
+  - { name: "github.com/go-delve/delve/cmd/dlv@latest", description: "Go debugger" }
+  - { name: "golang.org/x/tools/cmd/goimports@latest", description: "Auto-manage imports" }
+  - { name: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest", description: "Go linter aggregator" }
+  - { name: "golang.org/x/tools/gopls@latest", description: "Go language server" }
+  - { name: "honnef.co/go/tools/cmd/staticcheck@latest", description: "Go static analyzer" }
 
-# --- Dock app order (applied by macos_defaults role) ---
+# --- Dock app order ---
 dock_apps:
   - "/Applications/ChatGPT Atlas.app"
   - "/Applications/Google Chrome.app"
@@ -232,21 +126,17 @@ dock_apps:
   - "/Applications/Obsidian.app"
   - "/Applications/Cursor.app"
 
-# --- Shell aliases ---
+# --- Shell ---
 shell_aliases:
-  - alias: claude_yolo
-    command: "claude --dangerously-skip-permissions"
-  - alias: gemini_yolo
-    command: "gemini --yolo"
+  - { alias: claude_yolo, command: "claude --dangerously-skip-permissions" }
+  - { alias: gemini_yolo, command: "gemini --yolo" }
 
-# --- Extra PATH entries ---
 extra_path_entries:
   - "$HOME/.local/bin"
   - "$HOME/.bun/bin"
   - "$HOME/bin"
   - "$HOME/go/bin"
 
-# --- Shell completions & extras ---
 shell_extras:
   - name: bun_completions
     line: '[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"'
@@ -261,17 +151,37 @@ claude_settings:
   skip_dangerous_mode_prompt: true
   experimental_agent_teams: true
 
-# --- Backup settings (used by backup role) ---
+# --- Backup settings ---
 backup_dir: "{{ ansible_env.HOME }}/mac_backup"
 backup_items:
-  - name: ssh_keys
-    src: "{{ ansible_env.HOME }}/.ssh"
-  - name: fonts
-    src: "{{ ansible_env.HOME }}/Library/Fonts"
+  - { name: ssh_keys, src: "{{ ansible_env.HOME }}/.ssh" }
+  - { name: fonts, src: "{{ ansible_env.HOME }}/Library/Fonts" }
 
-# --- Manual install apps (not in Homebrew or App Store) ---
+# --- Manual install apps ---
 manual_install_apps:
-  - name: "We Love Lights"
-    url: "manual download"
-  - name: "FastestVPN"
-    url: "App Store or website"
+  - { name: "We Love Lights", url: "manual download" }
+  - { name: "FastestVPN", url: "App Store or website" }
+
+# ============================================================
+# NICE-TO-HAVE — uncomment and move above when needed
+# ============================================================
+# homebrew_formulae (append to list above):
+#   - name: docker
+#   - name: docker-compose
+#   - name: colima
+#   - name: ffmpeg
+#   - name: imagemagick
+#   - name: wget
+#   - name: yq
+#   - name: graphviz
+#
+# homebrew_casks (append to list above):
+#   - name: gcloud-cli
+#   - name: ngrok/ngrok/ngrok       # needs tap: ngrok/ngrok
+#   - name: flux-app
+#   - name: duet
+#   - name: conductor
+#   - name: sublime-text
+#
+# vscode_extensions (append to list above):
+#   - name: ms-azuretools.vscode-docker
