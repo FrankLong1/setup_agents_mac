@@ -1,6 +1,6 @@
 ---
 # Mac Environment Setup Playbook
-# Run: cd ansible && ./run.sh
+# Run: cd setup && ./run.sh
 # Review: Edit group_vars/all.yml to toggle what gets installed
 #
 # Run individual roles with tags:
@@ -12,7 +12,6 @@
 #   ./run.sh npm
 #   ./run.sh go
 #   ./run.sh macos
-#   ./run.sh backup
 
 - name: Setup Mac environment
   hosts: localhost
@@ -27,7 +26,6 @@
     - { role: npm_globals,   tags: ['npm'] }
     - { role: go_tools,      tags: ['go'] }
     - { role: macos_defaults, tags: ['macos'] }
-    - { role: backup,        tags: ['backup', 'never'] }
 
   post_tasks:
     - name: Manual install reminders

@@ -1,0 +1,69 @@
+---
+- name: Deploy .gitconfig
+  copy:
+    src: gitconfig
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    mode: "0644"
+    backup: true
+
+- name: Deploy .tmux.conf
+  copy:
+    src: tmux.conf
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    mode: "0644"
+    backup: true
+
+- name: Deploy .zshrc
+  template:
+    src: zshrc.j2
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    mode: "0644"
+    backup: true
+
+- name: Ensure .claude directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.claude"
+    state: directory
+    mode: "0755"
+
+- name: Deploy Claude Code settings.json
+  template:
+    src: claude_settings.json.j2
+    dest: "{{ ansible_env.HOME }}/.claude/settings.json"
+    mode: "0644"
+    backup: true
+
+- name: Configure Claude Code Puppeteer MCP
+  shell: claude mcp add puppeteer
+  register: mcp_result
+  failed_when: false
+  changed_when: "'added' in mcp_result.stdout | default('')"
+
+- name: Deploy shared editor settings (Cursor + VS Code)
+  block:
+    - name: Ensure editor settings directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ editor_dirs }}"
+
+    - name: Deploy shared editor settings.json
+      template:
+        src: editor_settings.json.j2
+        dest: "{{ item }}/settings.json"
+        mode: "0644"
+        backup: true
+      loop: "{{ editor_dirs }}"
+
+    - name: Deploy shared editor keybindings.json
+      template:
+        src: editor_keybindings.json.j2
+        dest: "{{ item }}/keybindings.json"
+        mode: "0644"
+        backup: true
+      loop: "{{ editor_dirs }}"
+  vars:
+    editor_dirs:
+      - "{{ ansible_env.HOME }}/Library/Application Support/Cursor/User"
+      - "{{ ansible_env.HOME }}/Library/Application Support/Code/User"

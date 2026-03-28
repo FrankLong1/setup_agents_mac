@@ -1,0 +1,21 @@
+---
+# Go tools — installed via `go install`
+# Requires Go to be installed first (via homebrew role)
+
+- name: Check if Go is installed
+  shell: command -v go
+  register: go_check
+  failed_when: false
+  changed_when: false
+
+- name: Install Go tools
+  shell: "go install {{ item.name }}"
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/go"
+    PATH: "{{ ansible_env.HOME }}/go/bin:/opt/homebrew/bin:{{ ansible_env.PATH }}"
+  loop: "{{ go_tools }}"
+  loop_control:
+    label: "{{ item.description | default(item.name) }}"
+  when: go_check.rc == 0
+  register: go_install_result
+  changed_when: "'downloading' in go_install_result.stderr | default('')"

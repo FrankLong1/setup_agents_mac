@@ -1,0 +1,50 @@
+---
+# Prerequisites role — ensures the foundation is in place before other roles run
+
+- name: Check for Xcode CLI tools
+  shell: xcode-select -p
+  register: xcode_check
+  failed_when: false
+  changed_when: false
+
+- name: Install Xcode CLI tools if missing
+  shell: xcode-select --install
+  when: xcode_check.rc != 0
+
+- name: Check for Homebrew
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_check
+
+- name: Install Homebrew if missing
+  shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_check.stat.exists
+
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
+  changed_when: false
+
+- name: Install helper utilities
+  community.general.homebrew:
+    name: "{{ item.name }}"
+    state: present
+  loop: "{{ helper_formulae }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Generate Brewfile snapshot of current state
+  shell: brew bundle dump --file={{ ansible_env.HOME }}/Brewfile.snapshot --force
+  changed_when: false
+  failed_when: false
+
+- name: Display Brewfile location
+  debug:
+    msg: "Current brew state saved to ~/Brewfile.snapshot — use this as reference"
+
+- name: Check Full Disk Access
+  debug:
+    msg: |
+      IMPORTANT: Ensure your Terminal has "Full Disk Access" granted.
+      System Settings > Privacy & Security > Full Disk Access
+      Without this, Ansible cannot back up ~/.ssh, Mail configs, etc.

@@ -1,0 +1,9 @@
+---
+- name: Install VS Code extensions
+  shell: "code --install-extension {{ item.name }} --force"
+  loop: "{{ vscode_extensions }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: vscode_ext_result
+  changed_when: "'was successfully installed' in vscode_ext_result.stdout"
+  failed_when: false

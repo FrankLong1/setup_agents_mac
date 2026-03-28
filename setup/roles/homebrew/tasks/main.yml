@@ -1,0 +1,26 @@
+---
+- name: Add Homebrew taps
+  community.general.homebrew_tap:
+    name: "{{ item.name }}"
+    state: present
+  loop: "{{ homebrew_taps }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install Homebrew formulae
+  community.general.homebrew:
+    name: "{{ item.name }}"
+    state: present
+  loop: "{{ homebrew_formulae }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ item.name }}"
+    state: present
+    install_options: "no-quarantine"
+  loop: "{{ homebrew_casks }}"
+  loop_control:
+    label: "{{ item.name }}"
+  ignore_errors: true

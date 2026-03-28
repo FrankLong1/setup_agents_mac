@@ -8,7 +8,7 @@ echo "=================================================="
 echo "  Mac Environment Setup (Ansible)"
 echo "=================================================="
 echo ""
-echo "Config: ansible/group_vars/all.yml"
+echo "Config: setup/group_vars/all.yml"
 echo ""
 
 # Check ansible is installed
@@ -34,12 +34,10 @@ usage() {
     echo "  npm            — Global npm packages"
     echo "  go             — Go tools (delve, gopls, golangci-lint, etc.)"
     echo "  macos          — System preferences (Dock, Finder, keyboard)"
-    echo "  backup         — Back up current machine state (run BEFORE wiping!)"
     echo ""
     echo "Examples:"
-    echo "  ./run.sh              # Full setup (excludes backup)"
+    echo "  ./run.sh              # Full setup"
     echo "  ./run.sh homebrew     # Just apps & CLI tools"
-    echo "  ./run.sh backup       # Backup current machine"
     exit 0
 }
 

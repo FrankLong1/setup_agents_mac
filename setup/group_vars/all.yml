@@ -16,11 +16,13 @@ helper_formulae:
   - name: tree
 
 # --- Core CLI Tools (Homebrew formulae) ---
-homebrew_taps: []
+homebrew_taps:
+  - name: oven-sh/bun
 
 homebrew_formulae:
   - name: git
   - name: node
+  - name: oven-sh/bun/bun
   - name: "python@3.13"
   - name: uv
   - name: ripgrep
@@ -143,12 +145,6 @@ claude_settings:
   voice_enabled: true
   skip_dangerous_mode_prompt: true
   experimental_agent_teams: true
-
-# --- Backup settings ---
-backup_dir: "{{ ansible_env.HOME }}/mac_backup"
-backup_items:
-  - { name: ssh_keys, src: "{{ ansible_env.HOME }}/.ssh" }
-  - { name: fonts, src: "{{ ansible_env.HOME }}/Library/Fonts" }
 
 # --- Manual install apps ---
 manual_install_apps:
