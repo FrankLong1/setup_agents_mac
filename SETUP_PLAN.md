@@ -1,32 +1,77 @@
 # Mac Environment Reproduction Plan
 
-## What's Automated (Ansible handles this)
+## Quick Start
 
 ```bash
+# 1. BEFORE wiping — back up current machine
+cd ansible && ./run.sh backup
+
+# 2. ON NEW MACHINE — full setup
 cd ansible && ./run.sh
 ```
 
-Or run individual pieces:
-```bash
-./run.sh homebrew    # Just apps & CLI tools
-./run.sh dotfiles    # Just config files
-./run.sh vscode      # Just VS Code extensions
-./run.sh npm         # Just global npm packages
-./run.sh macos       # Just system preferences
-./run.sh ai_tools    # Just AI tool configs
+## Architecture
+
+```
+ansible/
+├── site.yml                    # Main playbook — orchestrates all roles
+├── group_vars/all.yml          # THE config file — everything listed is installed
+├── run.sh                      # Entry point (installs Ansible if needed)
+├── ansible.cfg
+├── inventory.yml
+└── roles/
+    ├── prerequisites/          # Xcode, Homebrew, mas, brew bundle snapshot
+    ├── homebrew/               # CLI tools (formulae) + desktop apps (casks)
+    ├── mas_apps/               # Mac App Store apps (Magnet, Kindle, etc.)
+    ├── dotfiles/               # .gitconfig, .tmux.conf, .zshrc, Claude settings, MCP servers
+    ├── vscode/                 # VS Code extensions
+    ├── npm_globals/            # Global npm packages
+    ├── go_tools/               # Go tools (delve, gopls, golangci-lint, etc.)
+    ├── macos_defaults/         # System preferences (Dock, Finder, keyboard)
+    └── backup/                 # Back up current machine state
 ```
 
-### How to review before running
-Edit `ansible/group_vars/all.yml` — everything is categorized and togglable.
-Commented-out items = stuff currently on your machine that I flagged as "probably don't need on next machine."
-Enabled items = recommended to keep.
+## Run individual pieces
+
+```bash
+./run.sh prerequisites  # Xcode, Homebrew, helpers, Brewfile snapshot
+./run.sh homebrew       # CLI tools + desktop apps
+./run.sh mas            # Mac App Store apps
+./run.sh dotfiles       # Config files + MCP servers
+./run.sh vscode         # VS Code extensions
+./run.sh npm            # Global npm packages
+./run.sh go             # Go tools
+./run.sh macos          # System preferences
+./run.sh backup         # Back up current machine (run BEFORE wiping!)
+```
+
+## How to customize
+
+Edit `ansible/group_vars/all.yml` — everything listed will be installed.
+
+To add a package: append it to the relevant list.
+To remove a package: delete the line.
+
+---
+
+## Essential Prerequisites
+
+These must exist before Ansible can take over:
+
+1. **Xcode Command Line Tools** — `xcode-select --install` (handled by prerequisites role)
+2. **Homebrew** — the package manager for macOS (handled by prerequisites role)
+3. **Python 3** — comes with Homebrew, needed for Ansible
+4. **Ansible** — `brew install ansible` (handled by `run.sh`)
+
+### System Access Requirements
+
+- **Full Disk Access** — Grant your Terminal app in System Settings > Privacy & Security. Without this, Ansible can't back up ~/.ssh or sensitive configs.
 
 ---
 
 ## What Requires Manual Steps
 
 ### 1. Authentication & Logins (unavoidable)
-These store credentials in Keychain / browser sessions — can't be automated:
 
 | Service | Command / Action |
 |---------|-----------------|
@@ -35,93 +80,56 @@ These store credentials in Keychain / browser sessions — can't be automated:
 | AWS | `aws configure` (need access key + secret) |
 | Claude | `claude login` |
 | Vercel | `vercel login` |
-| npm registry | `npm login` (if publishing) |
 | Docker Hub | `docker login` |
-| App Store apps | Sign in to App Store manually |
 | Chrome | Sign in to sync bookmarks/extensions |
-| Spotify | Sign in to app |
-| Signal/WhatsApp | QR code scan from phone |
-| Zoom | Sign in to app |
-| Obsidian Sync | Sign in if using Obsidian Sync |
-| Google Drive | Sign in to desktop app |
+| Spotify, Signal, WhatsApp, Zoom | Sign in to each app |
 
 ### 2. SSH Keys
+
 **Before wiping old machine:**
 ```bash
-# Back up SSH keys
-cp -r ~/.ssh /path/to/backup/ssh_keys
+./run.sh backup   # backs up ~/.ssh automatically
 ```
 **On new machine:**
 ```bash
-cp -r /path/to/backup/ssh_keys ~/.ssh
+cp -r ~/mac_backup/ssh_keys ~/.ssh
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/id_ed25519
 chmod 644 ~/.ssh/id_ed25519.pub
 ```
 
-### 3. Obsidian Vault
-Your notes/vault needs to be synced via:
-- Obsidian Sync (paid), OR
-- Git repo, OR
-- iCloud/Google Drive folder
+### 3. Non-Homebrew Apps (install manually)
 
-### 4. Warp Launch Configurations
-Your `~/.warp/launch_configurations/` has custom tmux session configs.
-These are tracked in a separate repo — just clone it on the new machine.
+| App | Source |
+|-----|--------|
+| We Love Lights | manual download |
+| FastestVPN | App Store or website |
 
-### 5. Non-Homebrew Apps (install manually)
-These are on your current machine but not installable via `brew`:
-- ChatGPT Atlas (download from openai.com)
-- Amazon Kindle (App Store)
-- Caffeine (App Store or download)
-- Magnet (App Store)
-- Raycast (download from raycast.com)
-- Wispr Flow (download from wispr.com)
-- WeChat (App Store)
-- Logitech Options+ (download from logitech.com)
-- balenaEtcher (download from balena.io)
-- duet (download from duetdisplay.com)
+### 4. API Keys & Environment Variables
 
-### 6. API Keys & Environment Variables
-**Before wiping old machine**, export these:
-```bash
-# Check for any API keys in shell configs
-grep -r "API_KEY\|SECRET\|TOKEN" ~/.zshrc ~/.bashrc ~/.bash_profile ~/.profile ~/.zprofile
-```
-Store them in a password manager, then add them to `~/.zshrc` on the new machine.
-
-### 7. Fonts
-If you've installed custom fonts:
-```bash
-# Back up fonts
-cp -r ~/Library/Fonts /path/to/backup/fonts
-```
-
----
-
-## Speculative / Nice-to-Have Automations
-
-### Could add later:
-1. **Raycast settings export/import** — Raycast has a built-in export feature
-2. **macOS Keyboard shortcuts** — can be set via `defaults write` but fragile across OS versions
-3. **Dock app ordering** — possible via `defaults write com.apple.dock persistent-apps` but finicky
-4. **Finder sidebar favorites** — possible but hacky
-5. **App Store apps via `mas`** — `brew install mas` then `mas install <app-id>` for Magnet, Kindle, etc.
-6. **1Password / Bitwarden CLI** for secrets — could inject API keys from password manager during setup
-7. **Warp config backup role** — clone the launch_configurations repo automatically
+Store actual values in a password manager. Add to `~/.zshrc.secrets` (sourced by .zshrc).
 
 ---
 
 ## Noah's Ark Checklist (before wiping)
 
-- [ ] Push all git repos (see repo-finder output)
-- [ ] Back up ~/.ssh
-- [ ] Back up API keys / env vars from .zshrc
-- [ ] Back up Obsidian vault
-- [ ] Back up any local databases (PostgreSQL data)
-- [ ] Export Raycast settings
-- [ ] Export browser bookmarks (if not using Chrome sync)
-- [ ] Back up ~/Documents, ~/Desktop if needed
-- [ ] Back up custom fonts
-- [ ] Screenshot your Dock layout and app positions
-- [ ] Note down any App Store purchases to re-download
+Run `./run.sh backup` first, then verify:
+
+- [ ] All git repos pushed (`find ~ -name .git -type d`)
+- [ ] SSH keys backed up
+- [ ] API keys / env vars stored in password manager
+- [ ] Obsidian vault synced
+- [ ] Browser bookmarks synced (Chrome sync)
+- [ ] ~/Documents, ~/Desktop backed up if needed
+- [ ] Backup directory copied to external drive / cloud
+
+---
+
+## Testing
+
+Test on a clean macOS VM before running on your main machine:
+
+```bash
+# Using UTM or Parallels with a macOS VM
+cd ansible && ./run.sh
+```

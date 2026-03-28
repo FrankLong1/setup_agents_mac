@@ -4,7 +4,7 @@
     name: "{{ item.name }}"
     global: true
     state: present
-  loop: "{{ npm_global_packages | selectattr('enabled') | list }}"
+  loop: "{{ npm_global_packages }}"
   loop_control:
     label: "{{ item.name }}"
   ignore_errors: true

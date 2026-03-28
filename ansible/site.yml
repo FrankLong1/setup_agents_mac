@@ -1,59 +1,61 @@
 ---
 # Mac Environment Setup Playbook
-# Run: cd ansible && ansible-playbook site.yml
+# Run: cd ansible && ./run.sh
 # Review: Edit group_vars/all.yml to toggle what gets installed
 #
-# You can run individual roles with tags:
-#   ansible-playbook site.yml --tags homebrew
-#   ansible-playbook site.yml --tags dotfiles
-#   ansible-playbook site.yml --tags vscode
-#   ansible-playbook site.yml --tags npm
-#   ansible-playbook site.yml --tags macos
-#   ansible-playbook site.yml --tags ai_tools
+# Run individual roles with tags:
+#   ./run.sh prerequisites
+#   ./run.sh homebrew
+#   ./run.sh mas
+#   ./run.sh dotfiles
+#   ./run.sh vscode
+#   ./run.sh npm
+#   ./run.sh go
+#   ./run.sh macos
+#   ./run.sh backup
 
 - name: Setup Mac environment
   hosts: localhost
   connection: local
 
-  pre_tasks:
-    - name: Ensure Homebrew is installed
-      stat:
-        path: /opt/homebrew/bin/brew
-      register: homebrew_check
-
-    - name: Install Homebrew if missing
-      shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      when: not homebrew_check.stat.exists
-
-    - name: Ensure Xcode CLI tools are installed
-      shell: xcode-select -p
-      register: xcode_check
-      failed_when: false
-      changed_when: false
-
-    - name: Install Xcode CLI tools if missing
-      shell: xcode-select --install
-      when: xcode_check.rc != 0
-
   roles:
-    - { role: homebrew, tags: ['homebrew'] }
-    - { role: dotfiles, tags: ['dotfiles'] }
-    - { role: vscode, tags: ['vscode'] }
-    - { role: npm_globals, tags: ['npm'] }
+    - { role: prerequisites, tags: ['prerequisites'] }
+    - { role: homebrew,      tags: ['homebrew'] }
+    - { role: mas_apps,      tags: ['mas'] }
+    - { role: dotfiles,      tags: ['dotfiles'] }
+    - { role: vscode,        tags: ['vscode'] }
+    - { role: npm_globals,   tags: ['npm'] }
+    - { role: go_tools,      tags: ['go'] }
     - { role: macos_defaults, tags: ['macos'] }
-    - { role: ai_tools, tags: ['ai_tools'] }
+    - { role: backup,        tags: ['backup', 'never'] }
 
   post_tasks:
-    - name: Summary
+    - name: Manual install reminders
       debug:
         msg: |
-          Setup complete! Manual steps remaining:
-          1. Log in to apps (VS Code, Chrome, Spotify, etc.)
-          2. Sign in to GitHub: gh auth login
-          3. Sign in to Google Cloud: gcloud auth login
-          4. Sign in to AWS: aws configure
-          5. Import SSH keys from backup
-          6. Sign in to Claude: claude login
-          7. Sign in to Vercel: vercel login
-          8. Restore Obsidian vault from backup/sync
-          9. Restore Warp launch configurations from backup
+          ╔══════════════════════════════════════════════════════════╗
+          ║              MANUAL INSTALL APPS                        ║
+          ╚══════════════════════════════════════════════════════════╝
+          {% for app in manual_install_apps %}
+          • {{ app.name }} — {{ app.url }}
+          {% endfor %}
+      tags: ['always']
+
+    - name: Post-install manual steps
+      debug:
+        msg: |
+          ╔══════════════════════════════════════════════════════════╗
+          ║              POST-INSTALL CHECKLIST                     ║
+          ╚══════════════════════════════════════════════════════════╝
+          1. gh auth login
+          2. gcloud auth login
+          3. aws configure
+          4. claude login
+          5. vercel login
+          6. Restore SSH keys from backup
+          7. Restore Obsidian vault from backup/sync
+          8. Restore Warp launch configs
+          9. Sign in to apps (Chrome, Spotify, Signal, WhatsApp, Zoom)
+          10. Grant Terminal "Full Disk Access" in System Settings > Privacy & Security
+          11. Enable "Remote Login" in System Settings > Sharing (if needed)
+      tags: ['always']

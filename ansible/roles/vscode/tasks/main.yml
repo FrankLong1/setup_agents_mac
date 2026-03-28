@@ -1,7 +1,7 @@
 ---
 - name: Install VS Code extensions
   shell: "code --install-extension {{ item.name }} --force"
-  loop: "{{ vscode_extensions | selectattr('enabled') | list }}"
+  loop: "{{ vscode_extensions }}"
   loop_control:
     label: "{{ item.name }}"
   register: vscode_ext_result

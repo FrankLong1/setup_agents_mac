@@ -6,11 +6,38 @@
     type: "{{ item.type }}"
     value: "{{ item.value }}"
     state: present
-  loop: "{{ macos_defaults | selectattr('enabled') | list }}"
+  loop: "{{ macos_defaults }}"
   loop_control:
     label: "{{ item.description }}"
+
+- name: Set Dock app order
+  shell: |
+    # Clear existing persistent apps
+    defaults write com.apple.dock persistent-apps -array
+    {% for app in dock_apps %}
+    # Add {{ app }}
+    defaults write com.apple.dock persistent-apps -array-add '<dict>
+      <key>tile-data</key>
+      <dict>
+        <key>file-data</key>
+        <dict>
+          <key>_CFURLString</key>
+          <string>file://{{ app | replace(" ", "%20") }}/</string>
+          <key>_CFURLStringType</key>
+          <integer>15</integer>
+        </dict>
+      </dict>
+    </dict>'
+    {% endfor %}
+  when: dock_apps is defined and dock_apps | length > 0
+  changed_when: true
 
 - name: Restart Dock to apply changes
   shell: killall Dock
   changed_when: true
-  when: macos_defaults | selectattr('enabled') | list | length > 0
+  when: (macos_defaults | length > 0) or (dock_apps is defined and dock_apps | length > 0)
+
+- name: Restart Finder to apply changes
+  shell: killall Finder
+  changed_when: true
+  when: macos_defaults | selectattr('domain', 'equalto', 'com.apple.finder') | list | length > 0

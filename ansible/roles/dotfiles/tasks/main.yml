@@ -32,3 +32,9 @@
     dest: "{{ ansible_env.HOME }}/.claude/settings.json"
     mode: "0644"
     backup: true
+
+- name: Configure Claude Code Puppeteer MCP
+  shell: claude mcp add puppeteer
+  register: mcp_result
+  failed_when: false
+  changed_when: "'added' in mcp_result.stdout | default('')"

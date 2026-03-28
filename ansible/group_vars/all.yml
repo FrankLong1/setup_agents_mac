@@ -1,8 +1,8 @@
 # ============================================================
 # MAC SETUP CONFIG — Review and toggle items before running
 # ============================================================
-# Set items to true/false to include/exclude them.
-# This is your "what to keep" checklist.
+# Only enabled items are listed. To add more, append with enabled: true.
+# Full catalog of available packages: `brew formulae`, `brew search`, `mas search`
 # ============================================================
 
 # --- User identity ---
@@ -10,456 +10,276 @@ git_user_name: "Frank Long"
 git_user_email: "fylong00@gmail.com"
 
 # --- Homebrew Taps ---
-# These add third-party repos to Homebrew
 homebrew_taps:
   - name: ngrok/ngrok
-    enabled: true
-  # - name: antoniorodr/memo        # memo CLI tool
-  #   enabled: true
-  # - name: cloudflare/cloudflare
-  #   enabled: true
-  # - name: coder/coder
-  #   enabled: true
-  # - name: daytonaio/cli
-  #   enabled: true
-  # - name: yakitrak/yakitrak        # obsidian-cli
-  #   enabled: true
+
+# --- Helper Utilities (installed first, used by other roles) ---
+helper_formulae:
+  - name: mas                       # Mac App Store CLI — required for mas_apps role
+  - name: ansible-lint              # Lint your playbooks
+  - name: tree                      # Visualize directory structure
 
 # --- Core CLI Tools (Homebrew formulae) ---
 homebrew_formulae:
   # Essential dev tools
   - name: git
-    enabled: true
-    category: essential
   - name: node
-    enabled: true
-    category: essential
   - name: "python@3.13"
-    enabled: true
-    category: essential
   - name: uv
-    enabled: true
-    category: essential
   - name: ripgrep
-    enabled: true
-    category: essential
   - name: gh
-    enabled: true
-    category: essential
   - name: wget
-    enabled: true
-    category: essential
   - name: tmux
-    enabled: true
-    category: essential
+  - name: bash
+  - name: tree
 
   # Languages & runtimes
   - name: go
-    enabled: true
-    category: languages
-  # - name: sbt              # Scala build tool
-  #   enabled: false
-  #   category: languages
-  # - name: "openjdk@11"     # Java 11
-  #   enabled: false
-  #   category: languages
 
   # Cloud & infra
   - name: awscli
-    enabled: true
-    category: cloud
-  # - name: cloudflared      # Cloudflare tunnel
-  #   enabled: false
-  #   category: cloud
-  # - name: tailscale        # VPN mesh
-  #   enabled: false
-  #   category: cloud
-  # - name: openvpn
-  #   enabled: false
-  #   category: cloud
-  # - name: wireguard-tools
-  #   enabled: false
-  #   category: cloud
 
   # Containers
   - name: docker
-    enabled: true
-    category: containers
   - name: docker-compose
-    enabled: true
-    category: containers
   - name: colima
-    enabled: true
-    category: containers
 
-  # Data & media
+  # Media
   - name: ffmpeg
-    enabled: true
-    category: media
   - name: imagemagick
-    enabled: true
-    category: media
-  # - name: gdal             # Geospatial data
-  #   enabled: false
-  #   category: data
-  # - name: "postgresql@16"  # Local Postgres
-  #   enabled: false
-  #   category: data
 
   # Misc utilities
   - name: yq
-    enabled: true
-    category: utils
   - name: graphviz
-    enabled: true
-    category: utils
-  # - name: cloc             # Count lines of code
-  #   enabled: false
-  #   category: utils
-  # - name: duti             # Set default apps for file types
-  #   enabled: false
-  #   category: utils
-  # - name: reattach-to-user-namespace  # tmux clipboard fix (may not be needed on modern macOS)
-  #   enabled: false
-  #   category: utils
-  # - name: whisper-cpp      # Local speech-to-text
-  #   enabled: false
-  #   category: utils
-  # - name: portaudio        # Audio I/O library
-  #   enabled: false
-  #   category: utils
 
-  # AI tools (Homebrew)
+  # AI tools
   - name: block-goose-cli
-    enabled: true
-    category: ai
   - name: gemini-cli
-    enabled: true
-    category: ai
-  # - name: antoniorodr/memo/memo
-  #   enabled: false
-  #   category: ai
-
-  # Third-party tapped
-  # - name: coder/coder/coder
-  #   enabled: false
-  #   category: cloud
-  # - name: daytonaio/cli/daytona
-  #   enabled: false
-  #   category: cloud
-  # - name: yakitrak/yakitrak/obsidian-cli
-  #   enabled: false
-  #   category: utils
 
 # --- Desktop Apps (Homebrew casks) ---
 homebrew_casks:
   # Code editors & terminals
   - name: cursor
-    enabled: true
-    category: dev
   - name: visual-studio-code
-    enabled: true
-    category: dev
   - name: warp
-    enabled: true
-    category: dev
   - name: sublime-text
-    enabled: true
-    category: dev
 
-  # Productivity
+  # Productivity & writing
   - name: obsidian
-    enabled: true
-    category: productivity
-  # - name: typora           # Markdown editor
-  #   enabled: false
-  #   category: productivity
-  # - name: mark-text        # Another markdown editor (pick one)
-  #   enabled: false
-  #   category: productivity
-  # - name: libreoffice
-  #   enabled: false
-  #   category: productivity
 
   # Communication
   - name: zoom
-    enabled: true
-    category: comms
   - name: signal
-    enabled: true
-    category: comms
   - name: whatsapp
-    enabled: true
-    category: comms
-  # - name: messenger        # Facebook Messenger
-  #   enabled: false
-  #   category: comms
 
-  # Cloud & VPN
+  # Browsers
+  - name: google-chrome
+
+  # Cloud
   - name: gcloud-cli
-    enabled: true
-    category: cloud
   - name: ngrok/ngrok/ngrok
-    enabled: true
-    category: cloud
+  - name: google-drive
 
   # Media & misc
   - name: spotify
-    enabled: true
-    category: media
-  - name: google-drive
-    enabled: true
-    category: cloud
   - name: flux-app
-    enabled: true
-    category: utils
-  # - name: adobe-acrobat-reader
-  #   enabled: false
-  #   category: utils
-  # - name: moonlight        # Game streaming
-  #   enabled: false
-  #   category: gaming
-  # - name: steam
-  #   enabled: false
-  #   category: gaming
-  # - name: mactex           # LaTeX distribution (large ~4GB)
-  #   enabled: false
-  #   category: dev
 
   # AI desktop apps
   - name: block-goose
-    enabled: true
-    category: ai
+  - name: claude
+  - name: raycast
+  - name: codex-app
+  - name: wispr-flow
+  - name: duet
+  - name: conductor
 
-  # Microsoft Office (not available via cask, install manually or via App Store)
-  # - microsoft-excel
-  # - microsoft-powerpoint
-  # - microsoft-word
+# --- Mac App Store apps (requires `mas`) ---
+# Find app IDs: `mas search <app name>`
+mas_apps:
+  - name: Magnet
+    id: 441258766
+  - name: "Amazon Kindle"
+    id: 302584613
 
 # --- Global npm packages ---
 npm_global_packages:
   - name: "@anthropic-ai/claude-code"
-    enabled: true
-    category: ai
   - name: "@google/gemini-cli"
-    enabled: true
-    category: ai
   - name: ccusage
-    enabled: true
-    category: ai
   - name: vercel
-    enabled: true
-    category: deploy
   - name: "@modelcontextprotocol/server-puppeteer"
-    enabled: true
-    category: ai
-  # - name: "@openai/codex"
-  #   enabled: false
-  #   category: ai
-  # - name: "@qwen-code/qwen-code@latest"
-  #   enabled: false
-  #   category: ai
-  # - name: "@marp-team/marp-cli"
-  #   enabled: false
-  #   category: tools
-  # - name: "@e2b/cli"
-  #   enabled: false
-  #   category: tools
-  # - name: cline
-  #   enabled: false
-  #   category: ai
-  # - name: clawdbot
-  #   enabled: false
-  #   category: ai
-  # - name: happy-coder
-  #   enabled: false
-  #   category: ai
 
 # --- VS Code Extensions ---
 vscode_extensions:
   # AI assistants
   - name: anthropic.claude-code
-    enabled: true
-    category: ai
   - name: github.copilot-chat
-    enabled: true
-    category: ai
-  # - name: codeium.codeium
-  #   enabled: false
-  #   category: ai
-  # - name: openai.chatgpt
-  #   enabled: false
-  #   category: ai
-  # - name: saoudrizwan.claude-dev
-  #   enabled: false
-  #   category: ai
-  # - name: google.gemini-cli-vscode-ide-companion
-  #   enabled: false
-  #   category: ai
 
   # Python
   - name: ms-python.python
-    enabled: true
-    category: python
   - name: ms-python.vscode-pylance
-    enabled: true
-    category: python
   - name: ms-python.debugpy
-    enabled: true
-    category: python
-  # - name: ms-python.isort
-  #   enabled: false
-  #   category: python
-  # - name: ms-python.vscode-python-envs
-  #   enabled: false
-  #   category: python
 
   # Jupyter
   - name: ms-toolsai.jupyter
-    enabled: true
-    category: jupyter
   - name: ms-toolsai.jupyter-keymap
-    enabled: true
-    category: jupyter
   - name: ms-toolsai.jupyter-renderers
-    enabled: true
-    category: jupyter
-  # - name: ms-toolsai.vscode-jupyter-cell-tags
-  #   enabled: false
-  #   category: jupyter
-  # - name: ms-toolsai.vscode-jupyter-slideshow
-  #   enabled: false
-  #   category: jupyter
-  # - name: ms-toolsai.datawrangler
-  #   enabled: false
-  #   category: jupyter
 
   # Go
   - name: golang.go
-    enabled: true
-    category: go
 
   # Remote / containers
   - name: ms-vscode-remote.remote-ssh
-    enabled: true
-    category: remote
   - name: ms-vscode-remote.remote-containers
-    enabled: true
-    category: remote
-  # - name: ms-vscode-remote.remote-ssh-edit
-  #   enabled: false
-  #   category: remote
-  # - name: ms-vscode.remote-explorer
-  #   enabled: false
-  #   category: remote
 
   # Docker
   - name: ms-azuretools.vscode-docker
-    enabled: true
-    category: docker
 
   # Cloud
   - name: amazonwebservices.aws-toolkit-vscode
-    enabled: true
-    category: cloud
   - name: hashicorp.terraform
-    enabled: true
-    category: cloud
 
   # Utilities
   - name: gruntfuggly.todo-tree
-    enabled: true
-    category: utils
   - name: vscode-icons-team.vscode-icons
-    enabled: true
-    category: utils
   - name: mechatroner.rainbow-csv
-    enabled: true
-    category: utils
   - name: shd101wyy.markdown-preview-enhanced
-    enabled: true
-    category: utils
-  # - name: johnpapa.vscode-peacock
-  #   enabled: false
-  #   category: utils
-  # - name: foundation.vscode-glass
-  #   enabled: false
-  #   category: utils
-
-  # C/C++ & CMake
-  # - name: ms-vscode.cpptools
-  #   enabled: false
-  #   category: cpp
-  # - name: ms-vscode.cpptools-extension-pack
-  #   enabled: false
-  #   category: cpp
-  # - name: ms-vscode.cmake-tools
-  #   enabled: false
-  #   category: cpp
-  # - name: twxs.cmake
-  #   enabled: false
-  #   category: cpp
-  # - name: ms-vscode.cpptools-themes
-  #   enabled: false
-  #   category: cpp
-
-  # Scala / LaTeX / MATLAB (niche)
-  # - name: scala-lang.scala
-  #   enabled: false
-  #   category: niche
-  # - name: james-yu.latex-workshop
-  #   enabled: false
-  #   category: niche
-  # - name: mathworks.language-matlab
-  #   enabled: false
-  #   category: niche
-
-  # Speech
-  # - name: ms-vscode.vscode-speech
-  #   enabled: false
-  #   category: utils
-  # - name: ms-azuretools.vscode-containers
-  #   enabled: false
-  #   category: docker
 
 # --- macOS System Preferences ---
 macos_defaults:
+  # Dock
   - domain: com.apple.dock
     key: autohide
     type: bool
     value: true
-    enabled: true
     description: "Auto-hide the Dock"
   - domain: com.apple.dock
     key: tilesize
     type: int
     value: 74
-    enabled: true
     description: "Dock icon size (pixels)"
+  - domain: com.apple.dock
+    key: show-recents
+    type: bool
+    value: false
+    description: "Hide recent apps in Dock"
+
+  # Finder
+  - domain: NSGlobalDomain
+    key: AppleShowAllExtensions
+    type: bool
+    value: true
+    description: "Show all file extensions"
+  - domain: com.apple.finder
+    key: FXPreferredViewStyle
+    type: string
+    value: Nlsv
+    description: "Finder default view: list"
+  - domain: com.apple.finder
+    key: FXPreferredGroupBy
+    type: string
+    value: Kind
+    description: "Finder group by: Kind"
+  - domain: com.apple.finder
+    key: NewWindowTarget
+    type: string
+    value: PfAF
+    description: "New Finder windows open All Files"
+
+  # Keyboard
+  - domain: NSGlobalDomain
+    key: KeyRepeat
+    type: int
+    value: 2
+    description: "Key repeat rate (lower=faster)"
+  - domain: NSGlobalDomain
+    key: InitialKeyRepeat
+    type: int
+    value: 15
+    description: "Delay until key repeat (lower=shorter)"
+  - domain: NSGlobalDomain
+    key: ApplePressAndHoldEnabled
+    type: bool
+    value: false
+    description: "Disable press-and-hold for accented chars (enable key repeat)"
+  - domain: NSGlobalDomain
+    key: NSAutomaticCapitalizationEnabled
+    type: bool
+    value: false
+    description: "Disable auto-capitalization"
+  - domain: NSGlobalDomain
+    key: NSAutomaticPeriodSubstitutionEnabled
+    type: bool
+    value: false
+    description: "Disable double-space period substitution"
+
+# --- Go tools (installed via `go install`) ---
+go_tools:
+  - name: github.com/go-delve/delve/cmd/dlv@latest
+    description: "Go debugger"
+  - name: golang.org/x/tools/cmd/goimports@latest
+    description: "Auto-manage imports"
+  - name: github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    description: "Go linter aggregator"
+  - name: golang.org/x/tools/gopls@latest
+    description: "Go language server"
+  - name: honnef.co/go/tools/cmd/staticcheck@latest
+    description: "Go static analyzer"
+
+# --- Dock app order (applied by macos_defaults role) ---
+dock_apps:
+  - "/Applications/ChatGPT Atlas.app"
+  - "/Applications/Google Chrome.app"
+  - "/System/Applications/Messages.app"
+  - "/System/Applications/Notes.app"
+  - "/System/Applications/iPhone Mirroring.app"
+  - "/System/Applications/System Settings.app"
+  - "/System/Applications/Voice Memos.app"
+  - "/Applications/Obsidian.app"
+  - "/Applications/Warp.app"
 
 # --- Shell aliases ---
 shell_aliases:
   - alias: claude_yolo
     command: "claude --dangerously-skip-permissions"
-    enabled: true
-  - alias: claude_auto
-    command: "claude --dangerously-skip-permissions"
-    enabled: true
   - alias: gemini_yolo
     command: "gemini --yolo"
-    enabled: true
-  - alias: gemini_auto
-    command: "gemini --yolo"
-    enabled: true
 
 # --- Extra PATH entries ---
 extra_path_entries:
   - "$HOME/.local/bin"
   - "$HOME/.bun/bin"
   - "$HOME/bin"
+  - "$HOME/go/bin"
+
+# --- Shell completions & extras ---
+shell_extras:
+  - name: bun_completions
+    line: '[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"'
+  - name: bun_env
+    lines:
+      - 'export BUN_INSTALL="$HOME/.bun"'
+      - 'export PATH="$BUN_INSTALL/bin:$PATH"'
 
 # --- Claude Code settings ---
 claude_settings:
   voice_enabled: true
   skip_dangerous_mode_prompt: true
   experimental_agent_teams: true
+
+# --- Backup settings (used by backup role) ---
+backup_dir: "{{ ansible_env.HOME }}/mac_backup"
+backup_items:
+  - name: ssh_keys
+    src: "{{ ansible_env.HOME }}/.ssh"
+  - name: fonts
+    src: "{{ ansible_env.HOME }}/Library/Fonts"
+  - name: warp_configs
+    src: "{{ ansible_env.HOME }}/.warp"
+
+# --- Manual install apps (not in Homebrew or App Store) ---
+manual_install_apps:
+  - name: "We Love Lights"
+    url: "manual download"
+  - name: "FastestVPN"
+    url: "App Store or website"
