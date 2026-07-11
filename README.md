@@ -1,49 +1,57 @@
-# Mac Environment Setup
+# Mac Golden Workstation
 
-Ansible-based setup that reproduces a full Mac dev environment from scratch. One config file, one command.
-
-## Quick Start
+Reproduce the useful software and configuration from the reference Mac with one command.
 
 ```bash
-cd ansible && ./run.sh
+./setup.sh --profile personal
 ```
 
-## What It Does
+The `personal` profile is the current golden-workstation definition. Homebrew Bundle owns installed software; Ansible owns dotfiles, editor settings, macOS preferences, Dock layout, optional App Store apps, and verification.
 
-Installs and configures:
+## What is reproduced
 
-- **CLI tools** — git, node, python, uv, ripgrep, docker, tmux, awscli, go, etc.
-- **Desktop apps** — Cursor, VS Code, Chrome, Obsidian, Spotify, Zoom, Signal, Claude, etc.
-- **AI tools** — Claude Code, Gemini CLI, Goose, ccusage, Puppeteer MCP
-- **VS Code extensions** — Copilot, Python, Jupyter, Go, Docker, Terraform, etc.
-- **Dotfiles** — .gitconfig, .tmux.conf, .zshrc, Claude settings
-- **macOS preferences** — Dock, Finder, keyboard repeat settings
-- **Go tools** — delve, gopls, golangci-lint, staticcheck
+- Homebrew formulae, casks, taps, and services
+- VS Code extensions, Go tools, and global npm tools recorded by Homebrew Bundle
+- Selected Mac App Store apps
+- Git, tmux, zsh, Claude Code, Cursor, and VS Code configuration
+- Selected Dock, Finder, and keyboard preferences
+- A verification report and a concise manual-login checklist
 
-## Configuration
+User documents, credentials, browser sessions, and application data are deliberately outside the scope of this repository.
 
-Each role owns its config in `roles/<name>/defaults/main.yml`. Override any default in `group_vars/all.yml`.
-
-- To add a package: append it to the relevant list
-- To remove a package: delete the line
-
-## Run Individual Pieces
+## Commands
 
 ```bash
-./run.sh prerequisites  # Xcode, Homebrew, helpers
-./run.sh homebrew       # CLI tools + desktop apps
-./run.sh dotfiles       # Config files
-./run.sh vscode         # VS Code extensions
-./run.sh macos          # System preferences
-./run.sh backup         # Back up current machine (BEFORE wiping!)
+./setup.sh --profile personal             # apply the complete personal setup
+./setup.sh --profile personal --check     # preview configuration changes
+./setup.sh --profile personal --tag macos # apply one Ansible area
+./verify.sh --profile personal            # verify without changing the Mac
+./migration/capture-state.sh              # capture a fresh installed-state inventory
 ```
 
-## Backup Before Wiping
+The first run may stop and ask you to finish the Xcode Command Line Tools installer. Rerun the same command afterward. Homebrew, Ansible, and the required Ansible collection are bootstrapped automatically.
+
+## Layout
+
+```text
+setup.sh                         one-command entry point
+setup/profiles/personal.Brewfile complete installed-software receipt
+setup/profiles/personal.yml      personal preferences and verification contract
+setup/roles/                     idempotent configuration areas
+setup/verify.yml                 read-only verification playbook
+migration/capture-state.sh       safe installed-state inventory
+```
+
+## Future fleet use
+
+The profile boundary is intentional. A future MDM bootstrap can run the same entry point with a non-personal profile:
 
 ```bash
-cd ansible && ./run.sh backup
+./setup.sh --profile developer
 ```
 
-Backs up: Brewfile, App Store list, VS Code extensions, npm globals, SSH keys, fonts.
+MDM should eventually own enrollment, security policy, certificates, FileVault, privacy profiles, and OS updates. This repository should continue to own workstation software and developer configuration. No MDM vendor is required for the personal phase.
 
-See [SETUP_PLAN.md](SETUP_PLAN.md) for the full pre-wipe checklist and manual steps.
+## Manual steps
+
+Some services still require interactive sign-in, including GitHub, cloud providers, browsers, messaging apps, and licensed software. The setup prints the profile-specific checklist at the end.

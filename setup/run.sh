@@ -1,58 +1,122 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}"
 
-echo "=================================================="
-echo "  Mac Environment Setup (Ansible)"
-echo "=================================================="
-echo ""
-echo "Config: setup/group_vars/all.yml"
-echo ""
+PROFILE="personal"
+TAG=""
+CHECK_MODE=false
+VERIFY_ONLY=false
 
-# Check ansible is installed
-if ! command -v ansible-playbook &> /dev/null; then
-    echo "Installing Ansible via Homebrew..."
-    brew install ansible
-fi
-
-# Install required Ansible collections
-echo "Ensuring required Ansible collections are installed..."
-ansible-galaxy collection install community.general --force-with-deps 2>/dev/null || true
-
-# Usage
 usage() {
-    echo "Usage: ./run.sh [TAG]"
-    echo ""
-    echo "Tags:"
-    echo "  prerequisites  — Xcode, Homebrew, helper tools, Brewfile snapshot"
-    echo "  homebrew       — CLI tools + desktop apps (casks)"
-    echo "  mas            — Mac App Store apps (Magnet, Kindle, etc.)"
-    echo "  dotfiles       — .gitconfig, .tmux.conf, .zshrc, Claude settings, MCP servers"
-    echo "  vscode         — VS Code extensions"
-    echo "  npm            — Global npm packages"
-    echo "  go             — Go tools (delve, gopls, golangci-lint, etc.)"
-    echo "  macos          — System preferences (Dock, Finder, keyboard)"
-    echo ""
-    echo "Examples:"
-    echo "  ./run.sh              # Full setup"
-    echo "  ./run.sh homebrew     # Just apps & CLI tools"
-    exit 0
+  cat <<'EOF'
+Usage: ./setup.sh [options]
+
+Options:
+  --profile NAME   Apply setup/profiles/NAME.yml and NAME.Brewfile (default: personal)
+  --tag TAG        Run one area: prerequisites, homebrew, mas, dotfiles, or macos
+  --check          Preview Ansible-managed changes; do not install prerequisites or packages
+  --verify         Verify the selected profile without changing the machine
+  -h, --help       Show this help
+
+A positional tag remains supported for compatibility, for example: ./setup/run.sh macos
+EOF
 }
 
-if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    usage
+die() {
+  echo "ERROR: $*" >&2
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile)
+      [[ $# -ge 2 ]] || die "--profile requires a value"
+      PROFILE="$2"
+      shift 2
+      ;;
+    --tag)
+      [[ $# -ge 2 ]] || die "--tag requires a value"
+      TAG="$2"
+      shift 2
+      ;;
+    --check)
+      CHECK_MODE=true
+      shift
+      ;;
+    --verify)
+      VERIFY_ONLY=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -* )
+      die "unknown option: $1"
+      ;;
+    *)
+      [[ -z "${TAG}" ]] || die "only one positional tag is supported"
+      TAG="$1"
+      shift
+      ;;
+  esac
+done
+
+[[ "${PROFILE}" =~ ^[a-z0-9][a-z0-9_-]*$ ]] || die "invalid profile name: ${PROFILE}"
+[[ -f "profiles/${PROFILE}.yml" ]] || die "missing profile: setup/profiles/${PROFILE}.yml"
+[[ -f "profiles/${PROFILE}.Brewfile" ]] || die "missing Brewfile: setup/profiles/${PROFILE}.Brewfile"
+[[ "$(uname -s)" == "Darwin" ]] || die "this setup currently supports macOS only"
+
+if ! xcode-select -p >/dev/null 2>&1; then
+  if [[ "${CHECK_MODE}" == true || "${VERIFY_ONLY}" == true ]]; then
+    die "Xcode Command Line Tools are required; run: xcode-select --install"
+  fi
+  xcode-select --install || true
+  echo "Finish the Xcode Command Line Tools installer, then rerun this command."
+  exit 2
 fi
 
-# Allow running specific tags
-if [ -n "$1" ]; then
-    echo "Running with tags: $1"
-    ansible-playbook site.yml --tags "$1" -v
-else
-    echo "Running full setup..."
-    ansible-playbook site.yml -v
+if ! command -v brew >/dev/null 2>&1; then
+  if [[ "${CHECK_MODE}" == true || "${VERIFY_ONLY}" == true ]]; then
+    die "Homebrew is required for check or verification mode"
+  fi
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-echo ""
-echo "Done! See post-install manual steps above."
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+if ! command -v ansible-playbook >/dev/null 2>&1; then
+  if [[ "${CHECK_MODE}" == true || "${VERIFY_ONLY}" == true ]]; then
+    die "Ansible is required for check or verification mode"
+  fi
+  HOMEBREW_NO_AUTO_UPDATE=1 brew install ansible
+fi
+
+if ! ansible-galaxy collection list 2>/dev/null | grep -q '^community\.general'; then
+  if [[ "${CHECK_MODE}" == true || "${VERIFY_ONLY}" == true ]]; then
+    die "community.general is required; run: ansible-galaxy collection install -r setup/requirements.yml"
+  fi
+  ansible-galaxy collection install -r requirements.yml
+fi
+
+if [[ "${VERIFY_ONLY}" == true ]]; then
+  exec ansible-playbook verify.yml --extra-vars "mac_profile=${PROFILE}"
+fi
+
+command=(ansible-playbook site.yml --extra-vars "mac_profile=${PROFILE}")
+if [[ -n "${TAG}" ]]; then
+  command+=(--tags "${TAG}")
+fi
+if [[ "${CHECK_MODE}" == true ]]; then
+  command+=(--check --diff)
+fi
+
+echo "Applying Mac profile: ${PROFILE}"
+[[ -z "${TAG}" ]] || echo "Selected area: ${TAG}"
+"${command[@]}"

@@ -1,4 +1,8 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
 
 {% for path in extra_path_entries %}
 export PATH="{{ path }}:$PATH"
@@ -28,6 +32,6 @@ alias {{ item.alias }}='{{ item.command }}'
 {% endfor %}
 {% endif %}
 
-# NOTE: API keys (FMP_API_KEY, etc.) should be added manually
-# or sourced from a separate file not tracked in git:
-#   [ -f ~/.zshrc.secrets ] && source ~/.zshrc.secrets
+# Machine-local additions and secrets are intentionally outside Git.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+[ -f "$HOME/.zshrc.secrets" ] && source "$HOME/.zshrc.secrets"

@@ -1,8 +1,0 @@
----
-# Mac App Store apps (requires `mas`)
-# Find app IDs: `mas search <app name>`
-mas_apps:
-  - name: Magnet
-    id: 441258766
-  - name: "Amazon Kindle"
-    id: 302584613

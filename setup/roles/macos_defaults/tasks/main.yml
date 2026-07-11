@@ -1,5 +1,5 @@
 ---
-- name: Set macOS defaults
+- name: Set selected macOS defaults
   community.general.osx_defaults:
     domain: "{{ item.domain }}"
     key: "{{ item.key }}"
@@ -10,12 +10,10 @@
   loop_control:
     label: "{{ item.description }}"
 
-- name: Set Dock app order
-  shell: |
-    # Clear existing persistent apps
+- name: Apply selected Dock layout
+  ansible.builtin.shell: |
     defaults write com.apple.dock persistent-apps -array
     {% for app in dock_apps %}
-    # Add {{ app }}
     defaults write com.apple.dock persistent-apps -array-add '<dict>
       <key>tile-data</key>
       <dict>
@@ -29,15 +27,34 @@
       </dict>
     </dict>'
     {% endfor %}
-  when: dock_apps is defined and dock_apps | length > 0
-  changed_when: true
+  args:
+    executable: /bin/bash
+  when: dock_apps | length > 0 and not ansible_check_mode
+  changed_when: false
 
-- name: Restart Dock to apply changes
-  shell: killall Dock
-  changed_when: true
-  when: (macos_defaults | length > 0) or (dock_apps is defined and dock_apps | length > 0)
+- name: Set opt-in privileged macOS defaults
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ macos_defaults_sudo }}"
+  loop_control:
+    label: "{{ item.description }}"
+  become: true
+  when: manage_sudo_defaults | bool
 
-- name: Restart Finder to apply changes
-  shell: killall Finder
-  changed_when: true
-  when: macos_defaults | selectattr('domain', 'equalto', 'com.apple.finder') | list | length > 0
+- name: Restart Dock after applying its configuration
+  ansible.builtin.command: killall Dock
+  failed_when: false
+  changed_when: false
+  when: dock_apps | length > 0 and not ansible_check_mode
+
+- name: Restart Finder after applying its configuration
+  ansible.builtin.command: killall Finder
+  failed_when: false
+  changed_when: false
+  when:
+    - not ansible_check_mode
+    - macos_defaults | selectattr('domain', 'equalto', 'com.apple.finder') | list | length > 0

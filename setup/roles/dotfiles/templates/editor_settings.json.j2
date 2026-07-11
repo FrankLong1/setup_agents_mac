@@ -17,12 +17,14 @@
         "*.md": "default"
     },
     "remote.SSH.remotePlatform": {
-        "gpurig": "linux",
-        "nas": "linux",
-        "nas-vm": "linux"
+{% for host, platform in remote_ssh_hosts.items() %}
+        "{{ host }}": "{{ platform }}"{{ "," if not loop.last }}
+{% endfor %}
     },
     "remote.autoForwardPortsSource": "hybrid",
     "update.mode": "silentlyApplyOnQuit",
     "claudeCode.allowDangerouslySkipPermissions": true,
-    "claudeCode.preferredLocation": "sidebar"
+    "claudeCode.preferredLocation": "sidebar",
+    "terminal.integrated.defaultLocation": "editor",
+    "window.autoDetectColorScheme": false
 }

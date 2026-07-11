@@ -1,69 +1,82 @@
 ---
-- name: Deploy .gitconfig
-  copy:
-    src: gitconfig
-    dest: "{{ ansible_env.HOME }}/.gitconfig"
-    mode: "0644"
-    backup: true
+- name: Set global Git user name
+  community.general.git_config:
+    name: user.name
+    scope: global
+    value: "{{ git_user_name }}"
 
-- name: Deploy .tmux.conf
-  copy:
+- name: Set global Git user email
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_user_email }}"
+
+- name: Deploy tmux configuration
+  ansible.builtin.copy:
     src: tmux.conf
-    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    dest: "{{ home_dir }}/.tmux.conf"
     mode: "0644"
     backup: true
 
-- name: Deploy .zshrc
-  template:
-    src: zshrc.j2
-    dest: "{{ ansible_env.HOME }}/.zshrc"
-    mode: "0644"
+- name: Manage golden-workstation zsh block
+  ansible.builtin.blockinfile:
+    path: "{{ home_dir }}/.zshrc"
+    create: true
+    mode: "0600"
+    marker: "# {mark} MAC GOLDEN WORKSTATION"
+    block: "{{ lookup('template', 'zshrc.j2') | trim }}"
     backup: true
 
-- name: Ensure .claude directory exists
-  file:
-    path: "{{ ansible_env.HOME }}/.claude"
+- name: Ensure managed application configuration directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
     state: directory
     mode: "0755"
+  loop:
+    - "{{ home_dir }}/.claude"
+    - "{{ home_dir }}/Library/Application Support/Cursor/User"
+    - "{{ home_dir }}/Library/Application Support/Code/User"
 
-- name: Deploy Claude Code settings.json
-  template:
-    src: claude_settings.json.j2
-    dest: "{{ ansible_env.HOME }}/.claude/settings.json"
-    mode: "0644"
-    backup: true
+- name: Non-destructively merge managed JSON settings
+  ansible.builtin.command:
+    argv:
+      - python3
+      - "{{ role_path }}/files/merge_json.py"
+      - "{{ item.target }}"
+      - "{{ 'check' if ansible_check_mode else 'apply' }}"
+    stdin: "{{ lookup('template', item.template) }}"
+  loop:
+    - target: "{{ home_dir }}/.claude/settings.json"
+      template: claude_settings.json.j2
+    - target: "{{ home_dir }}/Library/Application Support/Cursor/User/settings.json"
+      template: editor_settings.json.j2
+    - target: "{{ home_dir }}/Library/Application Support/Code/User/settings.json"
+      template: editor_settings.json.j2
+    - target: "{{ home_dir }}/Library/Application Support/Cursor/User/keybindings.json"
+      template: editor_keybindings.json.j2
+    - target: "{{ home_dir }}/Library/Application Support/Code/User/keybindings.json"
+      template: editor_keybindings.json.j2
+  loop_control:
+    label: "{{ item.target }}"
+  register: dotfiles_json_merge
+  changed_when: dotfiles_json_merge.rc == 3
+  failed_when: dotfiles_json_merge.rc not in [0, 3]
+  check_mode: false
 
 - name: Configure Claude Code Puppeteer MCP
-  shell: claude mcp add puppeteer
-  register: mcp_result
+  ansible.builtin.command:
+    argv:
+      - claude
+      - mcp
+      - add
+      - --scope
+      - user
+      - puppeteer
+      - --
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-puppeteer"
+  register: dotfiles_mcp_result
   failed_when: false
-  changed_when: "'added' in mcp_result.stdout | default('')"
-
-- name: Deploy shared editor settings (Cursor + VS Code)
-  block:
-    - name: Ensure editor settings directories exist
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: "0755"
-      loop: "{{ editor_dirs }}"
-
-    - name: Deploy shared editor settings.json
-      template:
-        src: editor_settings.json.j2
-        dest: "{{ item }}/settings.json"
-        mode: "0644"
-        backup: true
-      loop: "{{ editor_dirs }}"
-
-    - name: Deploy shared editor keybindings.json
-      template:
-        src: editor_keybindings.json.j2
-        dest: "{{ item }}/keybindings.json"
-        mode: "0644"
-        backup: true
-      loop: "{{ editor_dirs }}"
-  vars:
-    editor_dirs:
-      - "{{ ansible_env.HOME }}/Library/Application Support/Cursor/User"
-      - "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
+  changed_when: "'added' in (dotfiles_mcp_result.stdout | default('') | lower)"
+  when: not ansible_check_mode

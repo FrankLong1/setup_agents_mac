@@ -1,9 +1,18 @@
 {
-{% if claude_settings.experimental_agent_teams %}
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "{{ '1' if claude_settings.experimental_agent_teams else '0' }}"
   },
-{% endif %}
+  "permissions": {
+    "deny": {{ claude_settings.permissions_deny | to_nice_json }}
+  },
+  "enabledPlugins": {{ claude_settings.enabled_plugins | to_nice_json }},
+  "extraKnownMarketplaces": {{ claude_settings.extra_known_marketplaces | to_nice_json }},
+  "effortLevel": "{{ claude_settings.effort_level }}",
+  "tui": "{{ claude_settings.tui }}",
+  "verbose": {{ claude_settings.verbose | lower }},
+  "autoCompactEnabled": {{ claude_settings.auto_compact_enabled | lower }},
+  "remoteControlAtStartup": {{ claude_settings.remote_control_at_startup | lower }},
+  "agentPushNotifEnabled": {{ claude_settings.agent_push_notifications | lower }},
   "voiceEnabled": {{ claude_settings.voice_enabled | lower }},
   "skipDangerousModePermissionPrompt": {{ claude_settings.skip_dangerous_mode_prompt | lower }}
 }

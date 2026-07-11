@@ -1,6 +1,0 @@
----
-# Helper utilities installed before other roles
-helper_formulae:
-  - name: mas                       # Mac App Store CLI — required for mas_apps role
-  - name: ansible-lint              # Lint your playbooks
-  - name: tree                      # Visualize directory structure

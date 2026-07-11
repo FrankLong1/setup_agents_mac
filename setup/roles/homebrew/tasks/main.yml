@@ -1,26 +1,89 @@
 ---
-- name: Add Homebrew taps
-  community.general.homebrew_tap:
-    name: "{{ item.name }}"
-    state: present
-  loop: "{{ homebrew_taps }}"
-  loop_control:
-    label: "{{ item.name }}"
+- name: List casks declared by the selected Brewfile
+  ansible.builtin.command:
+    argv:
+      - brew
+      - bundle
+      - list
+      - --cask
+      - "--file={{ profile_brewfile }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  register: homebrew_declared_casks
+  changed_when: false
+  check_mode: false
 
-- name: Install Homebrew formulae
-  community.general.homebrew:
-    name: "{{ item.name }}"
-    state: present
-  loop: "{{ homebrew_formulae }}"
-  loop_control:
-    label: "{{ item.name }}"
+- name: Check whether declared casks are Homebrew-managed
+  ansible.builtin.command:
+    argv:
+      - brew
+      - list
+      - --cask
+      - "{{ item }}"
+  loop: "{{ homebrew_declared_casks.stdout_lines }}"
+  register: homebrew_cask_status
+  changed_when: false
+  failed_when: false
+  check_mode: false
 
-- name: Install Homebrew casks
-  community.general.homebrew_cask:
-    name: "{{ item.name }}"
-    state: present
-    install_options: "no-quarantine"
-  loop: "{{ homebrew_casks }}"
+- name: Install or adopt declared casks
+  ansible.builtin.command:
+    argv:
+      - brew
+      - install
+      - --cask
+      - --adopt
+      - "{{ item.item }}"
+  loop: "{{ homebrew_cask_status.results }}"
   loop_control:
-    label: "{{ item.name }}"
-  ignore_errors: true
+    label: "{{ item.item }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  when: not ansible_check_mode and item.rc != 0
+  changed_when: true
+
+- name: Check Homebrew Bundle state
+  ansible.builtin.command:
+    argv:
+      - brew
+      - bundle
+      - check
+      - "--file={{ profile_brewfile }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_BUNDLE_NO_UPGRADE: "1"
+  register: homebrew_bundle_check
+  changed_when: homebrew_bundle_check.rc != 0
+  failed_when: false
+  check_mode: false
+
+- name: Explain package drift in check mode
+  ansible.builtin.debug:
+    msg: "The selected Brewfile is not fully satisfied; a normal run will install or adopt missing entries."
+  when: ansible_check_mode and homebrew_bundle_check.rc != 0
+
+- name: Install selected Brewfile without upgrading unrelated packages
+  ansible.builtin.command:
+    argv:
+      - brew
+      - bundle
+      - install
+      - "--file={{ profile_brewfile }}"
+      - --no-upgrade
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  when: not ansible_check_mode and homebrew_bundle_check.rc != 0
+  changed_when: true
+
+- name: Verify Homebrew Bundle after installation
+  ansible.builtin.command:
+    argv:
+      - brew
+      - bundle
+      - check
+      - "--file={{ profile_brewfile }}"
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_BUNDLE_NO_UPGRADE: "1"
+  changed_when: false
+  when: not ansible_check_mode

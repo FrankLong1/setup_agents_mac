@@ -1,58 +1,32 @@
 ---
-# Mac Environment Setup Playbook
-# Run: cd setup && ./run.sh
-# Review: Edit group_vars/all.yml to toggle what gets installed
-#
-# Run individual roles with tags:
-#   ./run.sh prerequisites
-#   ./run.sh homebrew
-#   ./run.sh mas
-#   ./run.sh dotfiles
-#   ./run.sh vscode
-#   ./run.sh npm
-#   ./run.sh go
-#   ./run.sh macos
-
-- name: Setup Mac environment
+- name: Apply Mac golden-workstation profile
   hosts: localhost
   connection: local
+  gather_facts: true
+  vars_files:
+    - "profiles/{{ mac_profile | default('personal') }}.yml"
 
   roles:
-    - { role: prerequisites, tags: ['prerequisites'] }
-    - { role: homebrew,      tags: ['homebrew'] }
-    - { role: mas_apps,      tags: ['mas'] }
-    - { role: dotfiles,      tags: ['dotfiles'] }
-    - { role: vscode,        tags: ['vscode'] }
-    - { role: npm_globals,   tags: ['npm'] }
-    - { role: go_tools,      tags: ['go'] }
-    - { role: macos_defaults, tags: ['macos'] }
+    - { role: prerequisites, tags: [prerequisites] }
+    - { role: homebrew, tags: [homebrew] }
+    - { role: mas_apps, tags: [mas] }
+    - { role: dotfiles, tags: [dotfiles] }
+    - { role: macos_defaults, tags: [macos] }
 
   post_tasks:
-    - name: Manual install reminders
-      debug:
-        msg: |
-          ╔══════════════════════════════════════════════════════════╗
-          ║              MANUAL INSTALL APPS                        ║
-          ╚══════════════════════════════════════════════════════════╝
-          {% for app in manual_install_apps %}
-          • {{ app.name }} — {{ app.url }}
-          {% endfor %}
-      tags: ['always']
+    - name: Show manual application gaps
+      ansible.builtin.debug:
+        msg: "{{ item.name }} — {{ item.reason }}"
+      loop: "{{ manual_install_apps }}"
+      tags: [always]
 
-    - name: Post-install manual steps
-      debug:
-        msg: |
-          ╔══════════════════════════════════════════════════════════╗
-          ║              POST-INSTALL CHECKLIST                     ║
-          ╚══════════════════════════════════════════════════════════╝
-          1. gh auth login
-          2. gcloud auth login
-          3. aws configure
-          4. claude login
-          5. vercel login
-          6. Restore SSH keys from backup
-          7. Restore Obsidian vault from backup/sync
-          8. Sign in to apps (Chrome, Spotify, Signal, WhatsApp, Zoom)
-          10. Grant Terminal "Full Disk Access" in System Settings > Privacy & Security
-          11. Enable "Remote Login" in System Settings > Sharing (if needed)
-      tags: ['always']
+    - name: Show remaining interactive steps
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ manual_steps }}"
+      tags: [always]
+
+    - name: Show verification command
+      ansible.builtin.debug:
+        msg: "Run ../verify.sh --profile {{ profile_name }} after completing interactive steps."
+      tags: [always]

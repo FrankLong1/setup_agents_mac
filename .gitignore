@@ -2,3 +2,6 @@
 *.retry
 .env
 *.secret
+*.secrets
+snapshots/
+mac-setup-inventory/
