@@ -1,0 +1,10 @@
+---
+- name: Opt-in restore of reviewed non-secret application configuration
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - "profiles/{{ mac_profile | default('personal') }}.yml"
+
+  roles:
+    - role: restore

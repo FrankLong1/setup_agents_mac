@@ -38,9 +38,8 @@ dock_apps:
   - /System/Applications/System Settings.app
   - /Applications/Cursor.app
 
-shell_aliases:
-  - { alias: claude_yolo, command: "claude --dangerously-skip-permissions" }
-  - { alias: gemini_yolo, command: "gemini --yolo" }
+# Permission-bypass aliases are intentionally not recreated on a clean machine.
+shell_aliases: []
 
 extra_path_entries:
   - "$HOME/.local/bin"
@@ -64,13 +63,13 @@ shell_extras:
 
 claude_settings:
   voice_enabled: true
-  skip_dangerous_mode_prompt: true
+  skip_dangerous_mode_prompt: false
   experimental_agent_teams: true
   effort_level: xhigh
   tui: fullscreen
   verbose: true
   auto_compact_enabled: false
-  remote_control_at_startup: true
+  remote_control_at_startup: false
   agent_push_notifications: true
   permissions_deny:
     - mcp__slack__slack_send_message
@@ -118,13 +117,11 @@ required_commands:
 
 required_apps:
   - /Applications/Claude.app
-  - /Applications/Codex.app
   - /Applications/Cursor.app
   - /Applications/Google Chrome.app
   - /Applications/Obsidian.app
   - /Applications/Raycast.app
   - /Applications/Visual Studio Code.app
-  - /Applications/Warp.app
 
 managed_files:
   - "{{ home_dir }}/.gitconfig"
@@ -133,14 +130,16 @@ managed_files:
   - "{{ home_dir }}/.claude/settings.json"
 
 manual_install_apps:
-  - { name: FastestVPN, reason: "No reliable Homebrew cask" }
-  - { name: Hermes, reason: "Locally built or separately distributed" }
-  - { name: Perplexity, reason: "No current Homebrew cask" }
-  - { name: We Love Lights, reason: "Manual installer" }
-  - { name: Goldman Sans fonts, reason: "Installed locally; licensing prevents committing font files" }
+  - { name: FastestVPN, reason: "No reliable Homebrew cask", url: "https://fastestvpn.com/downloads" }
+  - { name: Hermes, reason: "Locally built or separately distributed", url: "https://github.com/NousResearch/hermes-agent/releases" }
+  - { name: Perplexity, reason: "No current Homebrew cask", url: "https://www.perplexity.ai/downloads" }
+  - { name: We Love Lights, reason: "Manual installer", url: "https://welovelights.app/" }
+  - { name: Goldman Sans fonts, reason: "Installed locally; licensing prevents committing font files", url: "Licensed internal source" }
 
 manual_steps:
   - "Sign in with gh auth login"
-  - "Sign in to Google Cloud, AWS, Claude, and other cloud tools as needed"
+  - "From the gv_gcp_setup checkout, run scripts/auth-repo.sh login --profile standard; do not compose ad hoc cloud login commands"
+  - "Sign in to Claude, Codex, and other desktop applications as needed"
+  - "From the gv_gcp_setup checkout, run ./start-workstation.sh vscode to use the remote development environment"
   - "Sign in to Chrome, messaging, media, and licensed desktop applications"
-  - "Restore or generate SSH keys separately; private keys are never stored here"
+  - "Generate new SSH keys or restore them only from an approved encrypted backup; private keys are never stored here"

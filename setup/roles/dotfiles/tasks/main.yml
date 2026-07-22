@@ -79,4 +79,6 @@
   register: dotfiles_mcp_result
   failed_when: false
   changed_when: "'added' in (dotfiles_mcp_result.stdout | default('') | lower)"
-  when: not ansible_check_mode
+  when:
+    - not ansible_check_mode
+    - configure_puppeteer_mcp | bool

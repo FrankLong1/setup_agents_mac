@@ -20,6 +20,7 @@ manual_install_apps: []
 required_commands: []
 required_apps: []
 managed_files: []
+configure_puppeteer_mcp: false
 
 claude_settings:
   voice_enabled: false
@@ -35,6 +36,7 @@ claude_settings:
   enabled_plugins: {}
   extra_known_marketplaces: {}
 
-# Preserved as an explicit, opt-in legacy restore path. It never runs by default.
+# Preserved as an explicit, opt-in config-only legacy restore path. It never runs by default.
+allow_legacy_config_restore: false
 backup_dir: "{{ home_dir }}/mac_backup"
 obsidian_vault_path: "{{ home_dir }}/Documents/Obsidian"

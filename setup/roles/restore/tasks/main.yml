@@ -1,0 +1,74 @@
+---
+# This legacy role is deliberately not included by setup/site.yml. It may restore
+# non-secret application configuration only after a human reviews backup_dir.
+- name: Require explicit approval for legacy config restore
+  ansible.builtin.assert:
+    that: allow_legacy_config_restore | bool
+    fail_msg: >-
+      Legacy config restore is disabled. Review the backup contents, then pass
+      -e allow_legacy_config_restore=true to setup/restore.yml explicitly.
+
+- name: Check legacy backup directory
+  ansible.builtin.stat:
+    path: "{{ backup_dir }}"
+  register: restore_backup_dir
+
+- name: Require an explicit, existing legacy backup directory
+  ansible.builtin.assert:
+    that:
+      - restore_backup_dir.stat.exists
+      - restore_backup_dir.stat.isdir
+    fail_msg: >-
+      No reviewed backup directory exists at {{ backup_dir }}. This role never
+      restores credentials, SSH keys, session data, or user documents.
+
+- name: Inspect supported config-only restore sources
+  ansible.builtin.stat:
+    path: "{{ item.path }}"
+  loop:
+    - { name: fonts, path: "{{ backup_dir }}/fonts" }
+    - { name: Raycast settings, path: "{{ backup_dir }}/raycast" }
+    - { name: Obsidian settings, path: "{{ backup_dir }}/obsidian_config" }
+  register: restore_sources
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Restore supported non-secret configuration
+  vars:
+    restore_destinations:
+      - "{{ home_dir }}/Library/Fonts"
+      - "{{ home_dir }}/Library/Application Support/com.raycast.macos"
+      - "{{ obsidian_vault_path }}/.obsidian"
+  block:
+    - name: Ensure config-only restore destinations exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ restore_destinations }}"
+
+    - name: Copy supported config-only backup directories
+      ansible.builtin.copy:
+        src: "{{ item.item.path }}/"
+        dest: "{{ item.destination }}/"
+        mode: preserve
+      loop:
+        - item: "{{ restore_sources.results[0].item }}"
+          stat: "{{ restore_sources.results[0].stat }}"
+          destination: "{{ restore_destinations[0] }}"
+        - item: "{{ restore_sources.results[1].item }}"
+          stat: "{{ restore_sources.results[1].stat }}"
+          destination: "{{ restore_destinations[1] }}"
+        - item: "{{ restore_sources.results[2].item }}"
+          stat: "{{ restore_sources.results[2].stat }}"
+          destination: "{{ restore_destinations[2] }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+      when: item.stat.exists and item.stat.isdir
+
+- name: State the credential boundary
+  ansible.builtin.debug:
+    msg: >-
+      GitHub CLI auth, cloud credentials, browser sessions, password databases,
+      and SSH private keys are intentionally excluded. Re-authenticate through
+      approved interactive flows after the rebuild.

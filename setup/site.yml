@@ -16,7 +16,7 @@
   post_tasks:
     - name: Show manual application gaps
       ansible.builtin.debug:
-        msg: "{{ item.name }} — {{ item.reason }}"
+        msg: "{{ item.name }} — {{ item.reason }} — {{ item.url | default('See MANUAL_APPS.md') }}"
       loop: "{{ manual_install_apps }}"
       tags: [always]
 
