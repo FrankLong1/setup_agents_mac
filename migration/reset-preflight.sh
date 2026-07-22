@@ -128,11 +128,14 @@ else
   if [[ "${time_machine_running}" == false ]]; then
     latest_backup_output="$(tmutil latestbackup 2>&1)"
     latest_backup_status=$?
-    if [[ ${latest_backup_status} -eq 0 && -n "${latest_backup_output}" ]]; then
-      pass "An accessible Time Machine backup exists ($(basename "${latest_backup_output}"))."
+    latest_backup_path="$(printf '%s\n' "${latest_backup_output}" | tail -n 1)"
+    if [[ ${latest_backup_status} -eq 0 && "${latest_backup_path}" == /* && -e "${latest_backup_path}" ]]; then
+      pass "An accessible Time Machine backup exists ($(basename "${latest_backup_path}"))."
       emit "- MANUAL: Confirm the Time Machine menu shows a backup from today and restore one test file before erasing."
     elif printf '%s' "${latest_backup_output}" | grep -qi 'Full Disk Access'; then
       block "The latest Time Machine backup cannot be verified without Full Disk Access. Verify today's completion in the Time Machine menu and perform a test restore."
+    elif printf '%s' "${latest_backup_output}" | grep -Eqi '(failed to mount|error:)'; then
+      block "The Time Machine destination could not be mounted, so no completed backup can be verified. Connect the destination, run Back Up Now, and rerun."
     else
       block "No accessible completed Time Machine backup was found. Attach the backup disk, run Back Up Now, and rerun."
     fi

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import stat
 import subprocess
@@ -92,7 +93,12 @@ class RepositoryContractTests(unittest.TestCase):
             "#!/bin/bash\nif [[ \"${1:-}\" == -productVersion ]]; then echo 26.5.2; else echo macOS; fi\n",
         )
         write_executable(bin_dir / "fdesetup", "#!/bin/bash\necho 'FileVault is On.'\n")
-        tmutil_latest = "echo /Volumes/Backup/2026-07-21-120000.backup" if backup_exists else "exit 1"
+        if backup_exists:
+            backup_path = home / "TimeMachine" / "2026-07-21-120000.backup"
+            backup_path.mkdir(parents=True)
+            tmutil_latest = f"printf '%s\\n' {shlex.quote(str(backup_path))}"
+        else:
+            tmutil_latest = "exit 1"
         write_executable(
             bin_dir / "tmutil",
             "#!/bin/bash\ncase \"${1:-}\" in status) echo 'Running = 0' ;; latestbackup) "
@@ -135,6 +141,30 @@ class RepositoryContractTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("No accessible completed Time Machine backup", result.stdout)
+        self.assertIn("NO-GO", result.stdout)
+
+    def test_preflight_blocks_when_tmutil_reports_mount_failure_with_success_status(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            env = self._preflight_environment(home, backup_exists=False)
+            write_executable(
+                home / "mock-bin" / "tmutil",
+                "#!/bin/bash\n"
+                "case \"${1:-}\" in\n"
+                "  status) echo 'Running = 0' ;;\n"
+                "  latestbackup) echo 'Failed to mount backup destination, error: Error Domain=com.apple.backupd.ErrorDomain Code=18' ;;\n"
+                "  *) exit 1 ;;\n"
+                "esac\n",
+            )
+            result = run(
+                "bash",
+                "migration/reset-preflight.sh",
+                "--scan-root",
+                str(home / "Projects"),
+                env=env,
+            )
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("destination could not be mounted", result.stdout)
         self.assertIn("NO-GO", result.stdout)
 
     @unittest.skipUnless(shutil.which("ansible-playbook"), "ansible-playbook is not installed")
