@@ -56,6 +56,28 @@ you care about; do not make a giant vendor/cache tree part of the normal gate.
   new backup set until you have proved that this is the same protected dataset.
 - [ ] For TrueNAS, verify that the share uses the **Time Machine Share** purpose
   and that the SMB service has the Apple SMB2/3 protocol extension enabled.
+
+For a hostname-only repair, preserve rollback by adding and testing the
+reachable URL before removing the stale one. Use `-p`; never put the NAS
+password in the URL or shell history.
+
+```bash
+# Record the existing destination URL and ID.
+tmutil destinationinfo
+
+# Add the same protected share through its reachable hostname. This requires
+# administrator approval, Full Disk Access, and an interactive NAS password.
+sudo tmutil setdestination -a -p 'smb://USER@REACHABLE_HOST/SHARE'
+
+# Identify the newly added destination and target it explicitly.
+tmutil destinationinfo
+tmutil startbackup --auto --destination NEW_DESTINATION_ID
+```
+
+Do not run `tmutil removedestination STALE_DESTINATION_ID` until the targeted
+backup completes and a representative test restore succeeds. If the test
+fails, remove only the newly added destination and keep the prior configuration.
+
 - [ ] Enter Time Machine and restore one representative document to a temporary
   folder. Open it and compare it with the original.
 - [ ] Keep a second independent copy of irreplaceable documents. iCloud Drive is
