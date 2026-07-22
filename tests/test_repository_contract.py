@@ -55,6 +55,11 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertNotIn('brew "postgresql@16"', lean)
         self.assertNotIn('cask "steam"', lean)
         self.assertNotIn('cask "codex-app"', lean + full)
+        self.assertFalse(any(line.startswith("tap ") for line in lean.splitlines()))
+        self.assertFalse(any(line.startswith("tap ") for line in full.splitlines()))
+        self.assertIn('brew "oven-sh/bun/bun", trusted: true', lean)
+        self.assertIn('brew "oven-sh/bun/bun", trusted: true', full)
+        self.assertIn('cask "ngrok/ngrok/ngrok", trusted: true', full)
         self.assertIn("--full", run_script)
         self.assertIn('${PROFILE}-full.Brewfile', run_script)
 

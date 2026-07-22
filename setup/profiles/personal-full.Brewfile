@@ -1,17 +1,10 @@
 # Full historical workstation inventory. Use ./setup.sh --profile personal --full explicitly.
-tap "antoniorodr/memo"
-tap "cloudflare/cloudflare"
-tap "coder/coder"
-tap "daytonaio/cli"
-tap "ngrok/ngrok"
-tap "oven-sh/bun"
-tap "yakitrak/yakitrak"
 # Automate deployment, configuration, and upgrading
 brew "ansible"
 brew "ansible-lint"
 brew "mas"
 brew "tree"
-brew "oven-sh/bun/bun"
+brew "oven-sh/bun/bun", trusted: true
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.13"
 # Official Amazon AWS command-line interface
@@ -137,7 +130,7 @@ cask "mitmproxy"
 # GameStream client
 cask "moonlight"
 # Reverse proxy, secure introspectable tunnels to localhost
-cask "ngrok/ngrok/ngrok"
+cask "ngrok/ngrok/ngrok", trusted: true
 # Knowledge base that works on top of a local folder of plain text Markdown files
 cask "obsidian"
 cask "raycast"

@@ -1,6 +1,4 @@
 # Lean, supportable baseline for a clean Mac rebuild.
-tap "oven-sh/bun"
-
 brew "ansible"
 brew "ansible-lint"
 brew "awscli"
@@ -19,7 +17,7 @@ brew "graphviz"
 brew "imagemagick"
 brew "mas"
 brew "node"
-brew "oven-sh/bun/bun"
+brew "oven-sh/bun/bun", trusted: true
 brew "python@3.13"
 brew "ripgrep"
 brew "shellcheck"
