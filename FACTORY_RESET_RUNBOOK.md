@@ -45,6 +45,17 @@ you care about; do not make a giant vendor/cache tree part of the normal gate.
   recommends a dedicated backup device with about twice the Mac's storage
   capacity.
 - [ ] Wait until the Time Machine menu reports a completed backup from today.
+- [ ] For a network backup, also choose **Back Up Now** and confirm that it
+  reaches the data-transfer phase. A historical timestamp in System Settings is
+  not proof that the NAS is reachable now. Treat `Failed to mount`, `No route
+  to host`, or a backup that stops while finding the destination as a no-go.
+- [ ] If a supported SMB NAS is reachable by address but its Bonjour name is
+  not, follow Apple's recovery path: connect to the same Time Machine share in
+  Finder with `smb://<reachable-host>/<share>`, then select that mounted network
+  disk in Time Machine settings. Do not remove the old destination or create a
+  new backup set until you have proved that this is the same protected dataset.
+- [ ] For TrueNAS, verify that the share uses the **Time Machine Share** purpose
+  and that the SMB service has the Apple SMB2/3 protocol extension enabled.
 - [ ] Enter Time Machine and restore one representative document to a temporary
   folder. Open it and compare it with the original.
 - [ ] Keep a second independent copy of irreplaceable documents. iCloud Drive is
@@ -65,8 +76,11 @@ you care about; do not make a giant vendor/cache tree part of the normal gate.
   local snapshots disappear with the Mac's internal storage.
 
 Apple references: [Time Machine](https://support.apple.com/en-us/104984),
+[supported backup disks](https://support.apple.com/en-lamr/102423),
+[network-disk setup](https://support.apple.com/en-ie/guide/mac-help/mh15139/mac),
 [iCloud Drive setup](https://support.apple.com/en-us/118443), and
 [iCloud status meanings](https://support.apple.com/en-ke/guide/mac-help/mchlc994344b/mac).
+TrueNAS reference: [Time Machine SMB share](https://www.truenas.com/docs/scale/26/shares/smb/setupbasictimemachinesmbshare/).
 
 ## Phase 2: prevent account lockout
 
