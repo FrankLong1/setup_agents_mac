@@ -1,0 +1,32 @@
+---
+- name: Apply Mac golden-workstation profile
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - "profiles/{{ mac_profile | default('personal') }}.yml"
+
+  roles:
+    - { role: prerequisites, tags: [prerequisites] }
+    - { role: homebrew, tags: [homebrew] }
+    - { role: mas_apps, tags: [mas] }
+    - { role: dotfiles, tags: [dotfiles] }
+    - { role: macos_defaults, tags: [macos] }
+
+  post_tasks:
+    - name: Show manual application gaps
+      ansible.builtin.debug:
+        msg: "{{ item.name }} — {{ item.reason }} — {{ item.url | default('See MANUAL_APPS.md') }}"
+      loop: "{{ manual_install_apps }}"
+      tags: [always]
+
+    - name: Show remaining interactive steps
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      loop: "{{ manual_steps }}"
+      tags: [always]
+
+    - name: Show verification command
+      ansible.builtin.debug:
+        msg: "Run ../verify.sh --profile {{ profile_name }} after completing interactive steps."
+      tags: [always]

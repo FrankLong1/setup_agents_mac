@@ -1,0 +1,30 @@
+{
+    "window.commandCenter": true,
+    "terminal.integrated.inheritEnv": false,
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "explorer.confirmPasteNative": false,
+    "editor.formatOnSave": true,
+    "security.promptForLocalFileProtocolHandling": false,
+    "security.promptForRemoteFileProtocolHandling": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "jupyter.askForKernelRestart": false,
+    "window.restoreWindows": "none",
+    "workbench.editorAssociations": {
+        "*.md": "default"
+    },
+    "remote.SSH.remotePlatform": {
+{% for host, platform in remote_ssh_hosts.items() %}
+        "{{ host }}": "{{ platform }}"{{ "," if not loop.last }}
+{% endfor %}
+    },
+    "remote.autoForwardPortsSource": "hybrid",
+    "update.mode": "silentlyApplyOnQuit",
+    "claudeCode.allowDangerouslySkipPermissions": true,
+    "claudeCode.preferredLocation": "sidebar",
+    "terminal.integrated.defaultLocation": "editor",
+    "window.autoDetectColorScheme": false
+}

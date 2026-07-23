@@ -1,0 +1,145 @@
+---
+profile_name: personal
+
+git_user_name: "Frank Long"
+git_user_email: "fylong00@gmail.com"
+
+mas_apps:
+  - name: Magnet
+    id: 441258766
+  - name: Amazon Kindle
+    id: 302584613
+  - name: Pages
+    id: 409201541
+
+macos_defaults:
+  - { domain: com.apple.dock, key: autohide, type: bool, value: true, description: "Auto-hide the Dock" }
+  - { domain: com.apple.dock, key: tilesize, type: float, value: 74.0, description: "Dock icon size" }
+  - { domain: com.apple.dock, key: show-recents, type: bool, value: false, description: "Hide recent apps in Dock" }
+  - { domain: NSGlobalDomain, key: AppleShowAllExtensions, type: bool, value: true, description: "Show all file extensions" }
+  - { domain: com.apple.finder, key: FXPreferredViewStyle, type: string, value: Nlsv, description: "Use Finder list view" }
+  - { domain: com.apple.finder, key: FXPreferredGroupBy, type: string, value: Kind, description: "Group Finder by kind" }
+  - { domain: com.apple.finder, key: NewWindowTarget, type: string, value: PfAF, description: "Open new Finder windows to All Files" }
+  - { domain: NSGlobalDomain, key: KeyRepeat, type: int, value: 2, description: "Fast key repeat" }
+  - { domain: NSGlobalDomain, key: InitialKeyRepeat, type: int, value: 15, description: "Short key-repeat delay" }
+  - { domain: NSGlobalDomain, key: ApplePressAndHoldEnabled, type: bool, value: false, description: "Enable key repeat" }
+  - { domain: NSGlobalDomain, key: NSAutomaticCapitalizationEnabled, type: bool, value: false, description: "Disable automatic capitalization" }
+  - { domain: NSGlobalDomain, key: NSAutomaticPeriodSubstitutionEnabled, type: bool, value: false, description: "Disable double-space period" }
+
+# Available but disabled to keep the normal workstation run passwordless.
+manage_sudo_defaults: false
+macos_defaults_sudo:
+  - { domain: /Library/Preferences/com.apple.TimeMachine, key: RequiresACPower, type: bool, value: true, description: "Only back up on AC power" }
+
+dock_apps:
+  - /Applications/Google Chrome.app
+  - /System/Applications/Messages.app
+  - /System/Applications/Notes.app
+  - /System/Applications/System Settings.app
+  - /Applications/Cursor.app
+
+# Permission-bypass aliases are intentionally not recreated on a clean machine.
+shell_aliases: []
+
+extra_path_entries:
+  - "$HOME/.local/bin"
+  - "$HOME/.hermes/node/bin"
+  - "$HOME/.bun/bin"
+  - "$HOME/bin"
+  - "$HOME/go/bin"
+  - "$HOME/.browser-use-env/bin"
+
+shell_extras:
+  - name: bun_completions
+    line: '[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"'
+  - name: bun_env
+    lines:
+      - 'export BUN_INSTALL="$HOME/.bun"'
+      - 'export PATH="$BUN_INSTALL/bin:$PATH"'
+  - name: direnv
+    line: 'command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"'
+  - name: demo_agent_secrets
+    line: '[ -r "$HOME/.config/demo-agent-secrets/demo-agent-secrets.zsh" ] && source "$HOME/.config/demo-agent-secrets/demo-agent-secrets.zsh"'
+
+claude_settings:
+  voice_enabled: true
+  skip_dangerous_mode_prompt: false
+  experimental_agent_teams: true
+  effort_level: xhigh
+  tui: fullscreen
+  verbose: true
+  auto_compact_enabled: false
+  remote_control_at_startup: false
+  agent_push_notifications: true
+  permissions_deny:
+    - mcp__slack__slack_send_message
+    - mcp__slack__slack_schedule_message
+    - mcp__slack__slack_add_reaction
+    - mcp__slack__slack_create_conversation
+    - mcp__slack__slack_create_canvas
+    - mcp__slack__slack_update_canvas
+  enabled_plugins:
+    codex@openai-codex: true
+    langsmith-tracing@langsmith-claude-code-plugins: true
+    last30days@last30days-skill: true
+    loop-kit@automate-more-local: true
+    loop-kit@loop-kit: true
+  extra_known_marketplaces:
+    langsmith-claude-code-plugins:
+      source: { source: git, url: "https://github.com/langchain-ai/langsmith-claude-code-plugins.git" }
+    last30days-skill:
+      source: { source: github, repo: mvanhorn/last30days-skill }
+    openai-codex:
+      source: { source: github, repo: openai/codex-plugin-cc }
+    automate-more-local:
+      source: { source: directory, path: "{{ home_dir }}/Projects/automate_more" }
+    loop-kit:
+      source: { source: directory, path: "{{ home_dir }}/Projects/loop-kit-contract" }
+
+remote_ssh_hosts:
+  gpurig: linux
+  nas: linux
+  nas-vm: linux
+
+required_commands:
+  - ansible-playbook
+  - aws
+  - brew
+  - codex
+  - docker
+  - gh
+  - git
+  - go
+  - node
+  - rg
+  - tmux
+  - uv
+
+required_apps:
+  - /Applications/Claude.app
+  - /Applications/Cursor.app
+  - /Applications/Google Chrome.app
+  - /Applications/Obsidian.app
+  - /Applications/Raycast.app
+  - /Applications/Visual Studio Code.app
+
+managed_files:
+  - "{{ home_dir }}/.gitconfig"
+  - "{{ home_dir }}/.tmux.conf"
+  - "{{ home_dir }}/.zshrc"
+  - "{{ home_dir }}/.claude/settings.json"
+
+manual_install_apps:
+  - { name: FastestVPN, reason: "No reliable Homebrew cask", url: "https://fastestvpn.com/downloads" }
+  - { name: Hermes, reason: "Locally built or separately distributed", url: "https://github.com/NousResearch/hermes-agent/releases" }
+  - { name: Perplexity, reason: "No current Homebrew cask", url: "https://www.perplexity.ai/downloads" }
+  - { name: We Love Lights, reason: "Manual installer", url: "https://welovelights.app/" }
+  - { name: Goldman Sans fonts, reason: "Installed locally; licensing prevents committing font files", url: "Licensed internal source" }
+
+manual_steps:
+  - "Sign in with gh auth login"
+  - "From the gv_gcp_setup checkout, run scripts/auth-repo.sh login --profile standard; do not compose ad hoc cloud login commands"
+  - "Sign in to Claude, Codex, and other desktop applications as needed"
+  - "From the gv_gcp_setup checkout, run ./start-workstation.sh vscode to use the remote development environment"
+  - "Sign in to Chrome, messaging, media, and licensed desktop applications"
+  - "Generate new SSH keys or restore them only from an approved encrypted backup; private keys are never stored here"

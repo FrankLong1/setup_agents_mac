@@ -1,0 +1,79 @@
+---
+- name: Verify Mac golden-workstation profile
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - "profiles/{{ mac_profile | default('personal') }}.yml"
+
+  tasks:
+    - name: Require macOS
+      ansible.builtin.assert:
+        that: ansible_facts['system'] == "Darwin"
+
+    - name: Check complete Homebrew Bundle state
+      ansible.builtin.command:
+        argv:
+          - brew
+          - bundle
+          - check
+          - "--file={{ profile_brewfile }}"
+      environment:
+        HOMEBREW_NO_AUTO_UPDATE: "1"
+        HOMEBREW_BUNDLE_NO_UPGRADE: "1"
+      register: brew_verify
+      changed_when: false
+      failed_when: false
+
+    - name: Require complete Homebrew Bundle state
+      ansible.builtin.assert:
+        that: brew_verify.rc == 0
+        fail_msg: "The {{ profile_name }} Brewfile is not fully installed. Run ./setup.sh --profile {{ profile_name }}."
+
+    - name: Check required commands
+      ansible.builtin.command:
+        argv: [which, "{{ item }}"]
+      loop: "{{ required_commands }}"
+      register: command_checks
+      changed_when: false
+      failed_when: false
+
+    - name: Require expected commands
+      ansible.builtin.assert:
+        that: item.rc == 0
+        fail_msg: "Missing required command: {{ item.item }}"
+      loop: "{{ command_checks.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Check required desktop applications
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ required_apps }}"
+      register: app_checks
+
+    - name: Require expected desktop applications
+      ansible.builtin.assert:
+        that: item.stat.exists
+        fail_msg: "Missing required application: {{ item.item }}"
+      loop: "{{ app_checks.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Check managed configuration files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ managed_files }}"
+      register: file_checks
+
+    - name: Require managed configuration files
+      ansible.builtin.assert:
+        that: item.stat.exists
+        fail_msg: "Missing managed configuration: {{ item.item }}"
+      loop: "{{ file_checks.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Verification passed
+      ansible.builtin.debug:
+        msg: "The {{ profile_name }} golden-workstation profile is installed. Interactive sign-ins may still be required."

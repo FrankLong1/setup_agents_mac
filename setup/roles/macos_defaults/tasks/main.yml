@@ -1,0 +1,60 @@
+---
+- name: Set selected macOS defaults
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ macos_defaults }}"
+  loop_control:
+    label: "{{ item.description }}"
+
+- name: Apply selected Dock layout
+  ansible.builtin.shell: |
+    defaults write com.apple.dock persistent-apps -array
+    {% for app in dock_apps %}
+    defaults write com.apple.dock persistent-apps -array-add '<dict>
+      <key>tile-data</key>
+      <dict>
+        <key>file-data</key>
+        <dict>
+          <key>_CFURLString</key>
+          <string>file://{{ app | replace(" ", "%20") }}/</string>
+          <key>_CFURLStringType</key>
+          <integer>15</integer>
+        </dict>
+      </dict>
+    </dict>'
+    {% endfor %}
+  args:
+    executable: /bin/bash
+  when: dock_apps | length > 0 and not ansible_check_mode
+  changed_when: false
+
+- name: Set opt-in privileged macOS defaults
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ macos_defaults_sudo }}"
+  loop_control:
+    label: "{{ item.description }}"
+  become: true
+  when: manage_sudo_defaults | bool
+
+- name: Restart Dock after applying its configuration
+  ansible.builtin.command: killall Dock
+  failed_when: false
+  changed_when: false
+  when: dock_apps | length > 0 and not ansible_check_mode
+
+- name: Restart Finder after applying its configuration
+  ansible.builtin.command: killall Finder
+  failed_when: false
+  changed_when: false
+  when:
+    - not ansible_check_mode
+    - macos_defaults | selectattr('domain', 'equalto', 'com.apple.finder') | list | length > 0

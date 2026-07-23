@@ -1,0 +1,42 @@
+---
+# Cross-profile defaults. Machine-specific desired state belongs in profiles/*.yml.
+profile_name: "{{ mac_profile | default('personal') }}"
+profile_brewfile: "{{ playbook_dir }}/profiles/{{ profile_name }}.Brewfile"
+home_dir: "{{ lookup('env', 'HOME') }}"
+
+git_user_name: ""
+git_user_email: ""
+mas_apps: []
+macos_defaults: []
+macos_defaults_sudo: []
+manage_sudo_defaults: false
+dock_apps: []
+shell_aliases: []
+extra_path_entries: []
+shell_extras: []
+remote_ssh_hosts: {}
+manual_steps: []
+manual_install_apps: []
+required_commands: []
+required_apps: []
+managed_files: []
+configure_puppeteer_mcp: false
+
+claude_settings:
+  voice_enabled: false
+  skip_dangerous_mode_prompt: false
+  experimental_agent_teams: false
+  effort_level: default
+  tui: normal
+  verbose: false
+  auto_compact_enabled: true
+  remote_control_at_startup: false
+  agent_push_notifications: false
+  permissions_deny: []
+  enabled_plugins: {}
+  extra_known_marketplaces: {}
+
+# Preserved as an explicit, opt-in config-only legacy restore path. It never runs by default.
+allow_legacy_config_restore: false
+backup_dir: "{{ home_dir }}/mac_backup"
+obsidian_vault_path: "{{ home_dir }}/Documents/Obsidian"

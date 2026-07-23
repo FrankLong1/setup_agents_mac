@@ -1,0 +1,36 @@
+name: Test Mac setup contracts
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install Ansible
+        run: python -m pip install ansible
+      - name: Run contract tests
+        run: python -m unittest discover -s tests -v
+
+  macos-check-mode:
+    runs-on: macos-latest
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Ansible
+        run: brew install ansible
+      - name: Install required Ansible collection
+        run: ansible-galaxy collection install -r setup/requirements.yml
+      - name: Parse the clean-rebuild Brewfile
+        run: brew bundle list --file=setup/profiles/personal.Brewfile
+      - name: Exercise the real macOS setup path without changes
+        run: ./setup.sh --profile personal --check

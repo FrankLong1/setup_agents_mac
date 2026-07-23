@@ -1,0 +1,20 @@
+---
+- name: Require macOS
+  ansible.builtin.assert:
+    that: ansible_facts['system'] == "Darwin"
+    fail_msg: "This playbook currently supports macOS only."
+
+- name: Require Homebrew
+  ansible.builtin.command: brew --version
+  changed_when: false
+  check_mode: false
+
+- name: Check selected Brewfile
+  ansible.builtin.stat:
+    path: "{{ profile_brewfile }}"
+  register: prerequisites_selected_brewfile
+
+- name: Require selected Brewfile
+  ansible.builtin.assert:
+    that: prerequisites_selected_brewfile.stat.exists
+    fail_msg: "Missing profile Brewfile: {{ profile_brewfile }}"

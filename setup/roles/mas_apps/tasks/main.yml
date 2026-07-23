@@ -1,0 +1,33 @@
+---
+- name: Check whether mas is available
+  ansible.builtin.command: which mas
+  register: mas_apps_check
+  changed_when: false
+  failed_when: false
+
+- name: Install selected Mac App Store apps
+  ansible.builtin.command:
+    argv:
+      - mas
+      - install
+      - "{{ item.id | string }}"
+  loop: "{{ mas_apps }}"
+  loop_control:
+    label: "{{ item.name }} ({{ item.id }})"
+  register: mas_apps_results
+  changed_when: false
+  failed_when: false
+  when: mas_apps_check.rc == 0 and not ansible_check_mode
+
+- name: Report App Store items that still need attention
+  ansible.builtin.debug:
+    msg: "{{ item.item.name }} was not installed automatically. Sign in to the App Store and rerun --tag mas."
+  loop: "{{ mas_apps_results.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item.name | default('App Store item') }}"
+  when: item.rc | default(0) != 0
+
+- name: Report unavailable mas command
+  ansible.builtin.debug:
+    msg: "mas is not available yet; the Homebrew role normally installs it before this role."
+  when: mas_apps_check.rc != 0
