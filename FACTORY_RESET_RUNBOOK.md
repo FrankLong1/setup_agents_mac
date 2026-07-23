@@ -1,5 +1,10 @@
 # Safe Mac factory-reset runbook
 
+> **Implementation status:** the current setup automation is an M1 prototype.
+> Use this runbook to plan and protect a reset, but do not treat the apply
+> command as proven until the M2 disposable clean-machine rehearsal in
+> [ARCHITECTURE.md](ARCHITECTURE.md) has succeeded.
+
 This runbook is a stop/go gate for erasing a personal Mac and rebuilding it
 without recreating years of accidental workstation state. The setup repository
 installs software and selected configuration; it does **not** back up documents,
@@ -180,8 +185,9 @@ and [erase an Apple-silicon Mac with Disk Utility](https://support.apple.com/en-
    second factor. Prefer setting up as a new Mac rather than a full Migration
    Assistant restore if the purpose is to eliminate accumulated system state.
 2. Install macOS updates, then Xcode Command Line Tools if prompted.
-3. Clone this repository, check out the exact commit SHA proved before the
-   erase, and run the lean default. Do not trust an unrecorded moving branch:
+3. Clone this repository and check out the exact commit SHA proved before the
+   erase. Run only the layers that reached the required rehearsal gate; do not
+   trust an unrecorded moving branch or an M1-only prototype:
 
    ```bash
    git clone https://github.com/FrankLong1/setup_agents_mac.git

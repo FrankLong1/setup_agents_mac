@@ -77,6 +77,18 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("BREWFILE_GUIDE.md", readme)
         self.assertIn("BREWFILE_GUIDE.md", runbook)
 
+    def test_architecture_distinguishes_prototype_from_proven_recovery(self) -> None:
+        architecture = (ROOT / "ARCHITECTURE.md").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        runbook = (ROOT / "FACTORY_RESET_RUNBOOK.md").read_text(encoding="utf-8")
+
+        self.assertIn("M1 — prototype", architecture)
+        self.assertIn("M2 — disposable rehearsal", architecture)
+        self.assertIn("The current branch is **M1**", architecture)
+        self.assertIn("Replaceable executor", architecture)
+        self.assertIn("not a proven recovery product", readme)
+        self.assertIn("M1 prototype", runbook)
+
     def test_clean_profile_does_not_recreate_permission_bypasses(self) -> None:
         profile = (ROOT / "setup/profiles/personal.yml").read_text(encoding="utf-8")
         self.assertNotIn("dangerously-skip-permissions", profile)

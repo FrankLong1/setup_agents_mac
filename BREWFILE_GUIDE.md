@@ -1,5 +1,11 @@
 # Maintaining the clean package baseline
 
+This guide defines the intended package-management policy. The current
+`personal.Brewfile` is a prototype input to that process, not a claim that every
+listed package has already earned permanent baseline status. See
+`ARCHITECTURE.md` for the maturity gates required before a clean rebuild is
+considered proven.
+
 The goal is not to reproduce every package that has ever touched the Mac. The
 goal is to make a new Mac useful quickly, while keeping every permanent tool and
 background process intentional.

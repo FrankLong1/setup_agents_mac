@@ -1,14 +1,28 @@
-# Mac Golden Workstation
+# Clean Mac regeneration plan
 
-Reproduce a lean, supportable Mac baseline with one command.
+> **Status: M1 executable prototype, not a proven recovery product.**
+>
+> The architecture and desired-state boundaries are the durable work. The
+> current Ansible and Brewfile implementation has passed static checks and
+> macOS check mode, but it has not yet passed a clean-machine installation
+> rehearsal. Read [ARCHITECTURE.md](ARCHITECTURE.md) before treating any command
+> here as a reset procedure.
+
+Target outcome: reproduce a lean, supportable Mac baseline from reviewable
+manifests and selective restore paths.
 
 ```bash
 ./setup.sh --profile personal
 ```
 
-The `personal` profile is the clean-rebuild baseline. Homebrew Bundle owns installed software; Ansible owns dotfiles, editor settings, macOS preferences, Dock layout, optional App Store apps, and verification. The historical everything-list is retained as an explicit `--full` option so a factory reset does not immediately recreate years of accumulated software.
+The current `personal` profile is a prototype clean-rebuild baseline pending
+human curation and a disposable clean-Mac rehearsal. Homebrew Bundle declares
+installed software; Ansible currently manages dotfiles, editor settings, macOS
+preferences, Dock layout, optional App Store apps, and verification. The
+executor is replaceable. The historical everything-list is retained as an
+explicit `--full` option so it cannot be mistaken for the target workstation.
 
-## What is reproduced
+## What the current prototype models
 
 - Homebrew formulae, casks, taps, and services
 - VS Code extensions, Go tools, and global npm tools recorded by Homebrew Bundle
@@ -24,10 +38,13 @@ installed package. Follow [BREWFILE_GUIDE.md](BREWFILE_GUIDE.md) to capture
 current state, decide what deserves to survive future resets, validate changes,
 and remove accumulated packages safely.
 
-## Commands
+## Prototype commands
+
+These commands describe and exercise the current implementation. Do not run the
+apply path on a primary Mac merely because CI passes.
 
 ```bash
-./setup.sh --profile personal             # apply the complete personal setup
+./setup.sh --profile personal             # apply the current prototype profile
 ./setup.sh --profile personal --full      # opt in to the historical everything-list
 ./setup.sh --profile personal --check     # preview configuration changes
 ./setup.sh --profile personal --tag macos # apply one Ansible area
@@ -43,7 +60,7 @@ The Homebrew `codex` cask supplies the Codex command-line tool. Install or updat
 ## Layout
 
 ```text
-setup.sh                         one-command entry point
+setup.sh                         prototype executor entry point
 setup/profiles/personal.Brewfile lean clean-rebuild package baseline
 setup/profiles/personal-full.Brewfile historical installed-software receipt
 setup/profiles/personal.yml      personal preferences and verification contract
@@ -53,6 +70,7 @@ setup/restore.yml                explicit opt-in, config-only legacy restore
 migration/capture-state.sh       safe installed-state inventory
 migration/reset-preflight.sh     read-only erase-readiness checks
 FACTORY_RESET_RUNBOOK.md         backup, 2FA, erase, and selective-restore gate
+ARCHITECTURE.md                  target model, trust boundaries, maturity gates
 BREWFILE_GUIDE.md                package admission, curation, and cleanup policy
 tests/                           local and CI regression contracts
 ```
