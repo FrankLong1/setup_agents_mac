@@ -19,6 +19,11 @@ The `personal` profile is the clean-rebuild baseline. Homebrew Bundle owns insta
 
 User documents, credentials, browser sessions, and application data are deliberately outside the scope of this repository. Before erasing a Mac, use the [factory-reset runbook](FACTORY_RESET_RUNBOOK.md) and its read-only preflight. See [MANUAL_APPS.md](MANUAL_APPS.md) for direct-download apps and the interactive login checklist.
 
+The lean Brewfile is an intentionally curated baseline, not a dump of every
+installed package. Follow [BREWFILE_GUIDE.md](BREWFILE_GUIDE.md) to capture
+current state, decide what deserves to survive future resets, validate changes,
+and remove accumulated packages safely.
+
 ## Commands
 
 ```bash
@@ -48,6 +53,7 @@ setup/restore.yml                explicit opt-in, config-only legacy restore
 migration/capture-state.sh       safe installed-state inventory
 migration/reset-preflight.sh     read-only erase-readiness checks
 FACTORY_RESET_RUNBOOK.md         backup, 2FA, erase, and selective-restore gate
+BREWFILE_GUIDE.md                package admission, curation, and cleanup policy
 tests/                           local and CI regression contracts
 ```
 

@@ -85,7 +85,7 @@ block() {
 display_path() {
   local path="$1"
   if [[ "$path" == "${HOME}"* ]]; then
-    printf '~%s' "${path#${HOME}}"
+    printf '~%s' "${path#"${HOME}"}"
   else
     printf '%s' "$path"
   fi

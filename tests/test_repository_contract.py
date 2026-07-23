@@ -62,6 +62,20 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn('cask "ngrok/ngrok/ngrok", trusted: true', full)
         self.assertIn("--full", run_script)
         self.assertIn('${PROFILE}-full.Brewfile', run_script)
+        self.assertNotIn("restart_service", lean)
+
+    def test_brewfile_maintenance_workflow_is_documented(self) -> None:
+        guide = (ROOT / "BREWFILE_GUIDE.md").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        runbook = (ROOT / "FACTORY_RESET_RUNBOOK.md").read_text(encoding="utf-8")
+
+        self.assertIn("migration/capture-state.sh", guide)
+        self.assertIn("brew bundle check", guide)
+        self.assertIn("brew bundle cleanup", guide)
+        self.assertIn("Do not add `--force`", guide)
+        self.assertIn("does not provide a Brewfile lock", guide)
+        self.assertIn("BREWFILE_GUIDE.md", readme)
+        self.assertIn("BREWFILE_GUIDE.md", runbook)
 
     def test_clean_profile_does_not_recreate_permission_bypasses(self) -> None:
         profile = (ROOT / "setup/profiles/personal.yml").read_text(encoding="utf-8")

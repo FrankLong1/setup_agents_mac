@@ -150,7 +150,9 @@ Authentication references: [Apple two-factor authentication](https://support.app
   run the contract tests, and confirm the lean setup files exist.
 - [ ] Review the lean default Brewfile. The historical everything-list is kept
   as `personal-full.Brewfile` and requires explicit `--full`; do not use it on
-  day one unless every item is still justified.
+  day one unless every item is still justified. Use
+  [BREWFILE_GUIDE.md](BREWFILE_GUIDE.md) for the capture, admission, validation,
+  and cleanup workflow.
 - [ ] Record licensed/manual apps in `MANUAL_APPS.md`, without license keys.
 - [ ] Export only non-secret installed-state inventory with
   `./migration/capture-state.sh` and place the output in the encrypted backup.
