@@ -60,6 +60,7 @@ These commands describe and exercise the current implementation. Do not run the
 apply path on a primary Mac merely because CI passes.
 
 ```bash
+./setup.sh --profile personal --tag homebrew # install software directly with Homebrew Bundle
 ./setup.sh --profile personal             # apply the current prototype profile
 ./setup.sh --profile personal --full      # opt in to the historical everything-list
 ./setup.sh --profile personal --check     # preview configuration changes
@@ -69,7 +70,12 @@ apply path on a primary Mac merely because CI passes.
 ./migration/reset-preflight.sh            # report backup, Git, and recovery blockers
 ```
 
-The first run may stop and ask you to finish the Xcode Command Line Tools installer. Rerun the same command afterward. Homebrew, Ansible, and the required Ansible collection are bootstrapped automatically.
+The software-only command runs Homebrew Bundle directly in your terminal so
+privileged application installers can request your administrator password.
+It does not install Ansible just to install software. Configuration runs still
+bootstrap Ansible and the required collection automatically. The first run may
+stop and ask you to finish the Xcode Command Line Tools installer; rerun the
+same command afterward.
 
 The Homebrew `codex` cask supplies the Codex desktop app and command-line tool. The baseline stays deliberately small; use the full profile only for a separately reviewed historical restore.
 

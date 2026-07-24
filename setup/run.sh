@@ -101,6 +101,12 @@ elif [[ -x /usr/local/bin/brew ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
+if [[ "${TAG}" == "homebrew" && "${CHECK_MODE}" == false && "${VERIFY_ONLY}" == false ]]; then
+  echo "Installing software directly from: ${PROFILE_BREWFILE}"
+  echo "Some application installers may request your Mac administrator password."
+  exec brew bundle install --file="${PROFILE_BREWFILE}" --no-upgrade
+fi
+
 if ! command -v ansible-playbook >/dev/null 2>&1; then
   if [[ "${CHECK_MODE}" == true || "${VERIFY_ONLY}" == true ]]; then
     die "Ansible is required for check or verification mode"

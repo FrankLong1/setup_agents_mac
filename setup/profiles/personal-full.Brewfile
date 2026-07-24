@@ -1,6 +1,5 @@
 # Full historical workstation inventory. Use ./setup.sh --profile personal --full explicitly.
 # Automate deployment, configuration, and upgrading
-brew "ansible"
 brew "ansible-lint"
 brew "mas"
 brew "tree"

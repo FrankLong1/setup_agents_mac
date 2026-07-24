@@ -66,6 +66,16 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn('cask "tailscale-app"', lean)
         self.assertNotIn('brew "tailscale"', lean)
         self.assertNotIn('cask "cursor"', lean)
+        self.assertNotIn('brew "ansible"', lean)
+        self.assertNotIn('brew "ansible"', full)
+
+    def test_software_only_path_uses_homebrew_directly(self) -> None:
+        run_script = (ROOT / "setup/run.sh").read_text(encoding="utf-8")
+
+        direct_bundle = 'exec brew bundle install --file="${PROFILE_BREWFILE}" --no-upgrade'
+        ansible_bootstrap = "if ! command -v ansible-playbook"
+        self.assertIn(direct_bundle, run_script)
+        self.assertLess(run_script.index(direct_bundle), run_script.index(ansible_bootstrap))
 
     def test_brewfile_maintenance_workflow_is_documented(self) -> None:
         guide = (ROOT / "BREWFILE_GUIDE.md").read_text(encoding="utf-8")

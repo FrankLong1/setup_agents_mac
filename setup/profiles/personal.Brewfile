@@ -1,6 +1,5 @@
 # Essential, reviewed baseline for a clean Mac rebuild.
 # Add optional software only after it has earned a place in the baseline.
-brew "ansible"
 brew "direnv"
 brew "gh"
 brew "git"
