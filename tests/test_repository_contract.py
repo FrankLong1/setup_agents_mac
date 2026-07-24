@@ -33,6 +33,7 @@ class RepositoryContractTests(unittest.TestCase):
     def test_shell_entrypoints_parse(self) -> None:
         scripts = [
             "setup.sh",
+            "bootstrap.sh",
             "verify.sh",
             "setup/run.sh",
             "migration/capture-state.sh",
@@ -57,12 +58,14 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertNotIn('cask "codex-app"', lean + full)
         self.assertFalse(any(line.startswith("tap ") for line in lean.splitlines()))
         self.assertFalse(any(line.startswith("tap ") for line in full.splitlines()))
-        self.assertIn('brew "oven-sh/bun/bun", trusted: true', lean)
         self.assertIn('brew "oven-sh/bun/bun", trusted: true', full)
         self.assertIn('cask "ngrok/ngrok/ngrok", trusted: true', full)
         self.assertIn("--full", run_script)
         self.assertIn('${PROFILE}-full.Brewfile', run_script)
         self.assertNotIn("restart_service", lean)
+        self.assertIn('cask "tailscale-app"', lean)
+        self.assertNotIn('brew "tailscale"', lean)
+        self.assertNotIn('cask "cursor"', lean)
 
     def test_brewfile_maintenance_workflow_is_documented(self) -> None:
         guide = (ROOT / "BREWFILE_GUIDE.md").read_text(encoding="utf-8")
@@ -76,6 +79,7 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("does not provide a Brewfile lock", guide)
         self.assertIn("BREWFILE_GUIDE.md", readme)
         self.assertIn("BREWFILE_GUIDE.md", runbook)
+        self.assertIn("bootstrap.sh", readme)
 
     def test_architecture_distinguishes_prototype_from_proven_recovery(self) -> None:
         architecture = (ROOT / "ARCHITECTURE.md").read_text(encoding="utf-8")

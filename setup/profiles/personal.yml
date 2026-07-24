@@ -7,10 +7,6 @@ git_user_email: "fylong00@gmail.com"
 mas_apps:
   - name: Magnet
     id: 441258766
-  - name: Amazon Kindle
-    id: 302584613
-  - name: Pages
-    id: 409201541
 
 macos_defaults:
   - { domain: com.apple.dock, key: autohide, type: bool, value: true, description: "Auto-hide the Dock" }
@@ -36,26 +32,17 @@ dock_apps:
   - /System/Applications/Messages.app
   - /System/Applications/Notes.app
   - /System/Applications/System Settings.app
-  - /Applications/Cursor.app
+  - /Applications/Visual Studio Code.app
 
 # Permission-bypass aliases are intentionally not recreated on a clean machine.
 shell_aliases: []
 
 extra_path_entries:
   - "$HOME/.local/bin"
-  - "$HOME/.hermes/node/bin"
-  - "$HOME/.bun/bin"
   - "$HOME/bin"
   - "$HOME/go/bin"
-  - "$HOME/.browser-use-env/bin"
 
 shell_extras:
-  - name: bun_completions
-    line: '[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"'
-  - name: bun_env
-    lines:
-      - 'export BUN_INSTALL="$HOME/.bun"'
-      - 'export PATH="$BUN_INSTALL/bin:$PATH"'
   - name: direnv
     line: 'command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"'
   - name: demo_agent_secrets
@@ -103,24 +90,25 @@ remote_ssh_hosts:
 
 required_commands:
   - ansible-playbook
-  - aws
   - brew
   - codex
-  - docker
   - gh
   - git
   - go
   - node
   - rg
-  - tmux
+  - terraform
   - uv
+  - wget
+  - yq
 
 required_apps:
+  - /Applications/ChatGPT.app
   - /Applications/Claude.app
-  - /Applications/Cursor.app
+  - /Applications/Codex.app
   - /Applications/Google Chrome.app
   - /Applications/Obsidian.app
-  - /Applications/Raycast.app
+  - /Applications/Tailscale.app
   - /Applications/Visual Studio Code.app
 
 managed_files:
@@ -130,11 +118,7 @@ managed_files:
   - "{{ home_dir }}/.claude/settings.json"
 
 manual_install_apps:
-  - { name: FastestVPN, reason: "No reliable Homebrew cask", url: "https://fastestvpn.com/downloads" }
-  - { name: Hermes, reason: "Locally built or separately distributed", url: "https://github.com/NousResearch/hermes-agent/releases" }
-  - { name: Perplexity, reason: "No current Homebrew cask", url: "https://www.perplexity.ai/downloads" }
   - { name: We Love Lights, reason: "Manual installer", url: "https://welovelights.app/" }
-  - { name: Goldman Sans fonts, reason: "Installed locally; licensing prevents committing font files", url: "Licensed internal source" }
 
 manual_steps:
   - "Sign in with gh auth login"
