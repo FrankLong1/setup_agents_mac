@@ -11,7 +11,23 @@
 Target outcome: reproduce a lean, supportable Mac baseline from reviewable
 manifests and selective restore paths.
 
+## Clone and run
+
+On a fresh Mac, download the bootstrap script, inspect it, then run it. It
+installs the Xcode Command Line Tools when needed, clones this repository into
+`~/Projects/setup_agents_mac`, and runs the personal profile.
+
 ```bash
+curl -fsSLO https://raw.githubusercontent.com/FrankLong1/setup_agents_mac/main/bootstrap.sh
+less bootstrap.sh
+bash bootstrap.sh
+```
+
+To clone and run it manually instead:
+
+```bash
+git clone https://github.com/FrankLong1/setup_agents_mac.git ~/Projects/setup_agents_mac
+cd ~/Projects/setup_agents_mac
 ./setup.sh --profile personal
 ```
 
@@ -55,7 +71,7 @@ apply path on a primary Mac merely because CI passes.
 
 The first run may stop and ask you to finish the Xcode Command Line Tools installer. Rerun the same command afterward. Homebrew, Ansible, and the required Ansible collection are bootstrapped automatically.
 
-The Homebrew `codex` cask supplies the Codex command-line tool. Install or update the Codex desktop app through its supported OpenAI distribution rather than the retired `codex-app` cask.
+The Homebrew `codex` cask supplies the Codex desktop app and command-line tool. The baseline stays deliberately small; use the full profile only for a separately reviewed historical restore.
 
 ## Layout
 

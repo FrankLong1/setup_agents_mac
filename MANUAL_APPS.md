@@ -9,11 +9,7 @@ this repository.
 
 | App | Why it is manual | Official link |
 | --- | --- | --- |
-| FastestVPN | No reliable Homebrew cask | [Download FastestVPN](https://fastestvpn.com/downloads) |
-| Hermes | Locally built or separately distributed | [Hermes releases](https://github.com/NousResearch/hermes-agent/releases) |
-| Perplexity | No current Homebrew cask | [Download Perplexity for Mac](https://www.perplexity.ai/downloads) |
 | We Love Lights | Manual installer | [We Love Lights](https://welovelights.app/) |
-| Goldman Sans fonts | License-controlled; never commit font files | Obtain through the licensed internal source |
 
 ## Interactive sign-ins
 
