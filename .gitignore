@@ -3,5 +3,7 @@
 .env
 *.secret
 *.secrets
+nas-mount-doctor.env
+nas/mount-doctor.local.env
 snapshots/
 mac-setup-inventory/

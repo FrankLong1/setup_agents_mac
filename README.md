@@ -54,6 +54,34 @@ installed package. Follow [BREWFILE_GUIDE.md](BREWFILE_GUIDE.md) to capture
 current state, decide what deserves to survive future resets, validate changes,
 and remove accumulated packages safely.
 
+For the home TrueNAS, Tailscale, SMB auto-mount, and deferred Time Machine
+workflow, see [NAS_RUNBOOK.md](NAS_RUNBOOK.md).
+
+## Home NAS auto-mount (optional)
+
+The `nas/` helper is a small per-user LaunchAgent that asks Finder to reconnect
+an SMB data share at login and every five minutes. It deliberately uses Finder's
+saved Keychain credential instead of storing a password in the repository. Use a
+separate TrueNAS SMB share for Time Machine; macOS reconnects that destination
+itself. Configure the URL with a dedicated, non-admin TrueNAS account. The
+same helper works away from home through Tailscale: substitute the NAS
+Tailscale MagicDNS name (or its `100.x` address) in the SMB URL and keep
+Tailscale connected.
+
+```bash
+mkdir -p ~/.config
+cp nas/mount-doctor.env.example ~/.config/nas-mount-doctor.env
+# Edit the NAS address and share name, then connect once in Finder and select
+# "Remember this password".
+chmod +x nas/mount-doctor.sh nas/install-mount-doctor.sh
+./nas/mount-doctor.sh
+./nas/install-mount-doctor.sh
+```
+
+The installer writes `~/Library/LaunchAgents/com.frank.nas-mount-doctor.plist`.
+To check it manually, run `./nas/mount-doctor.sh`; its logs are in
+`~/Library/Logs/nas-mount-doctor.log`.
+
 ## Prototype commands
 
 These commands describe and exercise the current implementation. Do not run the
