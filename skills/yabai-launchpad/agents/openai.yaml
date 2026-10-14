@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yabai Launchpad"
+  short_description: "Snapshot and restore macOS window layouts with yabai"
+  default_prompt: "Use $yabai-launchpad to snapshot or restore my current macOS app, Space, display, and window layout safely."

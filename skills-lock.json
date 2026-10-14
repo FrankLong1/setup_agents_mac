@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "create-payment-credential": {
+      "source": "stripe/link-cli",
+      "sourceType": "github",
+      "skillPath": "skills/create-payment-credential/SKILL.md",
+      "computedHash": "1322e61c91cbf2860aca15cd652250807025b9255e70f66b92d14d7280f84c31"
+    }
+  }
+}

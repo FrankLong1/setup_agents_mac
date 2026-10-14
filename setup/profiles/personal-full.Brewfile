@@ -138,6 +138,8 @@ cask "signal"
 cask "slack"
 # Music streaming service
 cask "spotify"
+# macOS system monitor for temperature, power, fans, and other hardware metrics
+cask "stats"
 # Video game digital distribution service
 cask "steam"
 # Text editor for code, markup and prose
@@ -202,6 +204,7 @@ npm "cline"
 npm "corepack"
 npm "opencode-ai"
 npm "@anthropic-ai/claude-code"
+npm "@stripe/link-cli"
 npm "@modelcontextprotocol/server-puppeteer"
 npm "ccusage"
 npm "vercel"
