@@ -91,13 +91,17 @@ remote_ssh_hosts:
 required_commands:
   - ansible-playbook
   - brew
+  - bun
   - codex
   - gh
+  - gcloud
   - git
   - go
   - node
+  - python3
   - rg
   - terraform
+  - tmux
   - uv
   - wget
   - yq

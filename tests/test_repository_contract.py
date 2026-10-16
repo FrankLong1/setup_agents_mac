@@ -77,6 +77,26 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn(direct_bundle, run_script)
         self.assertLess(run_script.index(direct_bundle), run_script.index(ansible_bootstrap))
 
+    def test_collection_detection_consumes_large_listing_under_pipefail(self) -> None:
+        # The installed collection can appear near the start of a long listing.
+        # grep -q exits early, SIGPIPEs ansible-galaxy, and makes pipefail report
+        # an absent collection. Exercise the exact pipeline used by the runner.
+        script = (ROOT / "setup/run.sh").read_text(encoding="utf-8")
+        line = next(line for line in script.splitlines() if line.startswith("if ! ansible-galaxy"))
+        pipeline = line.removeprefix("if ! ").removesuffix("; then")
+        with tempfile.TemporaryDirectory() as tmp:
+            bin_dir = Path(tmp)
+            write_executable(
+                bin_dir / "ansible-galaxy",
+                "#!/usr/bin/env python3\n"
+                "import sys\n"
+                "sys.stdout.write('community.general 13.2.0\\n' + 'other.collection 1.0\\n' * 50000)\n",
+            )
+            env = os.environ.copy()
+            env["PATH"] = f"{bin_dir}:{env['PATH']}"
+            result = run("bash", "-o", "pipefail", "-c", pipeline, env=env)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_brewfile_maintenance_workflow_is_documented(self) -> None:
         guide = (ROOT / "BREWFILE_GUIDE.md").read_text(encoding="utf-8")
         readme = (ROOT / "README.md").read_text(encoding="utf-8")

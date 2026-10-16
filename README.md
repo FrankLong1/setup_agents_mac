@@ -97,6 +97,12 @@ BREWFILE_GUIDE.md                package admission, curation, and cleanup policy
 tests/                           local and CI regression contracts
 ```
 
+## Replacement-Mac readiness
+
+Read [MIGRATION_READINESS.md](MIGRATION_READINESS.md) for the October 16 audit,
+current agent/tool coverage, private-state recovery boundaries, and the remaining
+clean-Mac rehearsal gate. A successful contract suite is not a full recovery test.
+
 ## Future fleet use
 
 The profile boundary is intentional. A future MDM bootstrap can run the same entry point with a non-personal profile:

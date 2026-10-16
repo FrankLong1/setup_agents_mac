@@ -106,7 +106,7 @@ cask "gcloud-cli"
 cask "google-chrome"
 # Client for the Google Drive storage service
 cask "google-drive"
-cask "logi-options-plus"
+cask "logi-options+"
 # Free cross-platform office suite, fresh version
 cask "libreoffice"
 # Full TeX Live distribution with GUI applications
@@ -205,3 +205,4 @@ npm "@anthropic-ai/claude-code"
 npm "@modelcontextprotocol/server-puppeteer"
 npm "ccusage"
 npm "vercel"
+npm "@stripe/link-cli"
