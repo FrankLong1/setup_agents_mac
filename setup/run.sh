@@ -114,7 +114,7 @@ if ! command -v ansible-playbook >/dev/null 2>&1; then
   HOMEBREW_NO_AUTO_UPDATE=1 brew install ansible
 fi
 
-if ! ansible-galaxy collection list 2>/dev/null | grep -q '^community\.general'; then
+if ! ansible-galaxy collection list 2>/dev/null | grep '^community\.general[[:space:]]' >/dev/null; then
   if [[ "${CHECK_MODE}" == true || "${VERIFY_ONLY}" == true ]]; then
     die "community.general is required; run: ansible-galaxy collection install -r setup/requirements.yml"
   fi

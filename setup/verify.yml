@@ -17,6 +17,7 @@
           - brew
           - bundle
           - check
+          - --verbose
           - "--file={{ profile_brewfile }}"
       environment:
         HOMEBREW_NO_AUTO_UPDATE: "1"
@@ -28,7 +29,11 @@
     - name: Require complete Homebrew Bundle state
       ansible.builtin.assert:
         that: brew_verify.rc == 0
-        fail_msg: "The {{ profile_name }} Brewfile is not fully installed. Run ./setup.sh --profile {{ profile_name }}."
+        fail_msg: >-
+          The {{ profile_name }} Brewfile is not fully installed.
+          {{ brew_verify.stdout | default('') }}
+          {{ brew_verify.stderr | default('') }}
+          Run ./setup.sh --profile {{ profile_name }} when ready to install missing software.
 
     - name: Check required commands
       ansible.builtin.command:
